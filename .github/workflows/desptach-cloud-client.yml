@@ -30,7 +30,7 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Build project 
-      run: dotnet build --configuration Release --no-restore /p:Version=1.0.0
+      run: dotnet build --configuration Release /p:Version=1.0.0
   
     - name: Pack
       run: dotnet pack --configuration Release /p:Version=1.0.0
