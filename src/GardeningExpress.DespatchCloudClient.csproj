@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RepositoryUrl>https://github.com/GardeningExpress/REPOSITORY</RepositoryUrl>
+    <RepositoryUrl>https://github.com/GardeningExpress/despatch-cloud-client</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
