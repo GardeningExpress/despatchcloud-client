@@ -33,9 +33,11 @@ jobs:
       run: dotnet build --configuration Release /p:Version=1.0.0
   
     - name: Pack
+      if: github.ref == 'refs/heads/develop'
       run: dotnet pack --configuration Release /p:Version=1.0.0
 
     - name: Push
+      if: github.ref == 'refs/heads/develop'
       run: dotnet nuget push "src/bin/Release/*.nupkg" --api-key ${GITHUB_TOKEN} --skip-duplicate
       env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
