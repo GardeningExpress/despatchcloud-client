@@ -25,7 +25,7 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
-        source-url: https://nuget.pkg.github.com/GardeningExpress/index.json
+        source-url: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
       env:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
@@ -36,6 +36,6 @@ jobs:
       run: dotnet pack --configuration Release /p:Version=1.0.0
 
     - name: Push
-      run: dotnet nuget push "src/bin/Release/*.nupkg" --api-key ${GITHUB_TOKEN} --skip-duplicate
+      run: dotnet nuget push "src/bin/Release/*.nupkg" --source https://nuget.pkg.github.com/${{github.repository_owner}}/index.json --api-key ${GITHUB_TOKEN} --skip-duplicate
       env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
