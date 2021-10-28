@@ -1,0 +1,39 @@
+name: "Build & Deploy Despatch client nuget"
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the develop branch
+  workflow_dispatch:
+    
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+
+env:
+  DOTNET_VERSION: '3.1.x'
+
+jobs:
+  build-and-deploy-nuget:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        source-url: https://nuget.pkg.github.com/GardeningExpress/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Build project 
+      run: dotnet build --configuration Release --no-restore /p:Version=1.0.0
+  
+    - name: Pack
+      run: dotnet pack --configuration Release /p:Version=1.0.0
+
+    - name: Push
+      run: dotnet nuget push "bin/Release/*.nupkg"
