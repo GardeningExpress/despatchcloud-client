@@ -36,4 +36,6 @@ jobs:
       run: dotnet pack --configuration Release /p:Version=1.0.0
 
     - name: Push
-      run: dotnet nuget push "src/bin/Release/*.nupkg"
+      run: dotnet nuget push "src/bin/Release/*.nupkg" --api-key ${GITHUB_TOKEN} --skip-duplicate
+      env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
