@@ -1,4 +1,4 @@
-name: "Build & Deploy Despatch client nuget"
+name: "Build & Deploy DespatchCloud client nuget"
 on:
   # Trigger the workflow on push or pull request,
   # but only for the develop branch
