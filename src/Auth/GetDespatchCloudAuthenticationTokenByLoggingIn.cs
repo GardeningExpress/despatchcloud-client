@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace GardeningExpress.DespatchCloudClient
+namespace GardeningExpress.DespatchCloudClient.Auth
 {
     public class GetDespatchCloudAuthenticationTokenByLoggingIn : IGetDespatchCloudAuthenticationToken
     {

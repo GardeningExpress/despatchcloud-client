@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace GardeningExpress.DespatchCloudClient
+namespace GardeningExpress.DespatchCloudClient.Auth
 {
     public interface IGetDespatchCloudAuthenticationToken
     {
