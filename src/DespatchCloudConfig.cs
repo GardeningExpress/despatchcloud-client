@@ -14,7 +14,7 @@ namespace GardeningExpress.DespatchCloudClient
 
                 return _apiBaseUrl.EndsWith('/')
                     ? _apiBaseUrl
-                    : _apiBaseUrl + "/";
+                    : $"{_apiBaseUrl}/";
             }
             set => _apiBaseUrl = value;
         }
