@@ -30,11 +30,11 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Build project 
-      run: dotnet build --configuration Release /p:Version=1.1.0
+      run: dotnet build --configuration Release /p:Version=1.2.0
   
     - name: Pack
       if: github.ref == 'refs/heads/develop'
-      run: dotnet pack --configuration Release /p:Version=1.1.0
+      run: dotnet pack --configuration Release /p:Version=1.2.0
 
     - name: Push
       if: github.ref == 'refs/heads/develop'

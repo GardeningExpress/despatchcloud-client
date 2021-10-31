@@ -9,6 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{CCF55D28
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GardeningExpress.DespatchCloudClient.Tests.Unit", "tests\GardeningExpress.DespatchCloudClient.Tests.Unit\GardeningExpress.DespatchCloudClient.Tests.Unit.csproj", "{E12B524D-0ED1-4AEB-876B-A3124A0D33B2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2B1F08B4-86FB-4526-BF06-B11DC92D46A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0219E066-68A9-4134-A58F-3DDF1E06CCF2}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\desptachcloud-client.yml = .github\workflows\desptachcloud-client.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,5 +39,6 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{E12B524D-0ED1-4AEB-876B-A3124A0D33B2} = {CCF55D28-379C-4408-9E1B-4F107FB2A1A5}
+		{0219E066-68A9-4134-A58F-3DDF1E06CCF2} = {2B1F08B4-86FB-4526-BF06-B11DC92D46A1}
 	EndGlobalSection
 EndGlobal
