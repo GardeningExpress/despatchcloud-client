@@ -12,12 +12,12 @@ namespace GardeningExpress.DespatchCloudClient.Auth
     public class GetDespatchCloudAuthenticationTokenByLoggingIn : IGetDespatchCloudAuthenticationToken
     {
         private readonly HttpClient _httpClient;
-        private readonly IOptions<DespatchCloudConfig> _despatchCloudConfig;
+        private readonly IOptionsMonitor<DespatchCloudConfig> _despatchCloudConfig;
         private readonly ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn> _logger;
 
         public GetDespatchCloudAuthenticationTokenByLoggingIn(
             HttpClient httpClient,
-            IOptions<DespatchCloudConfig> despatchCloudConfig,
+            IOptionsMonitor<DespatchCloudConfig> despatchCloudConfig,
             ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn> logger
         )
         {
@@ -25,7 +25,7 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             _despatchCloudConfig = despatchCloudConfig;
             _logger = logger;
 
-            _httpClient.BaseAddress = new Uri(_despatchCloudConfig.Value.ApiBaseUrl);
+            _httpClient.BaseAddress = new Uri(_despatchCloudConfig.CurrentValue.ApiBaseUrl);
         }
 
         public async Task<string> GetTokenAsync()
@@ -36,8 +36,8 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             {
                 var loginRequest = new
                 {
-                    email = _despatchCloudConfig.Value.LoginEmailAddress,
-                    password = _despatchCloudConfig.Value.LoginPassword,
+                    email = _despatchCloudConfig.CurrentValue.LoginEmailAddress,
+                    password = _despatchCloudConfig.CurrentValue.LoginPassword,
                 };
 
                 EnsureRequestValid(loginRequest);

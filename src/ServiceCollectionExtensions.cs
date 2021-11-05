@@ -22,14 +22,14 @@ namespace GardeningExpress.DespatchCloudClient
 
             services.AddHttpClient<IDespatchCloudHttpClient, DespatchCloudHttpClient>((serviceProvider, client) =>
                 {
-                    var options = serviceProvider.GetService<IOptions<DespatchCloudConfig>>();
+                    var options = serviceProvider.GetService<IOptionsMonitor<DespatchCloudConfig>>();
 
-                    if (options == null || string.IsNullOrEmpty(options.Value.ApiBaseUrl))
+                    if (options == null || string.IsNullOrEmpty(options.CurrentValue.ApiBaseUrl))
                     {
                         throw new Exception("DespatchCloud API Base URL not set");
                     }
 
-                    client.BaseAddress = new Uri(options.Value.ApiBaseUrl);
+                    client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
                 })
                 .AddHttpMessageHandler<AddAuthTokenHandler>();
         }
