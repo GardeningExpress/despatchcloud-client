@@ -17,7 +17,7 @@ namespace GardeningExpress.DespatchCloudClient
                         .Bind(settings);
                 });
 
-            services.AddTransient<IGetDespatchCloudAuthenticationToken, GetDespatchCloudAuthenticationTokenByLoggingIn>();
+            services.AddSingleton<IGetDespatchCloudAuthenticationToken, GetDespatchCloudAuthenticationTokenByLoggingIn>();
             services.AddTransient<AddAuthTokenHandler>();
 
             services.AddHttpClient<IDespatchCloudHttpClient, DespatchCloudHttpClient>((serviceProvider, client) =>
