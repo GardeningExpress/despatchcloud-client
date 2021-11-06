@@ -17,18 +17,17 @@ namespace GardeningExpress.DespatchCloudClient
                         .Bind(settings);
                 });
 
-            services.AddSingleton<IGetDespatchCloudAuthenticationToken, GetDespatchCloudAuthenticationTokenByLoggingIn>();
             services.AddTransient<AddAuthTokenHandler>();
+
+            services.AddHttpClient<IGetDespatchCloudAuthenticationToken, GetDespatchCloudAuthenticationTokenByLoggingIn>((serviceProvider, client) =>
+            {
+                var options = serviceProvider.GetRequiredService<IOptionsMonitor<DespatchCloudConfig>>();
+                client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
+            });
 
             services.AddHttpClient<IDespatchCloudHttpClient, DespatchCloudHttpClient>((serviceProvider, client) =>
                 {
-                    var options = serviceProvider.GetService<IOptionsMonitor<DespatchCloudConfig>>();
-
-                    if (options == null || string.IsNullOrEmpty(options.CurrentValue.ApiBaseUrl))
-                    {
-                        throw new Exception("DespatchCloud API Base URL not set");
-                    }
-
+                    var options = serviceProvider.GetRequiredService<IOptionsMonitor<DespatchCloudConfig>>();
                     client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
                 })
                 .AddHttpMessageHandler<AddAuthTokenHandler>();
