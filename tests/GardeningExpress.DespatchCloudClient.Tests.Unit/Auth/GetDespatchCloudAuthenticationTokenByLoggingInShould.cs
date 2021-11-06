@@ -34,8 +34,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             var httpClient = _handler.CreateClient();
             httpClient.BaseAddress = new Uri("https://test.go");
 
-            var mockOptions = new Mock<IOptions<DespatchCloudConfig>>();
-            mockOptions.SetupGet(x => x.Value)
+            var mockOptions = new Mock<IOptionsMonitor<DespatchCloudConfig>>();
+            mockOptions.SetupGet(x => x.CurrentValue)
                 .Returns(_despatchCloudConfig);
 
             var mockLogger = new Mock<ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn>>();
