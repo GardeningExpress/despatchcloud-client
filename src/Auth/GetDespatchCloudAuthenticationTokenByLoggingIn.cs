@@ -87,7 +87,7 @@ namespace GardeningExpress.DespatchCloudClient.Auth
                 throw new Exception("DespatchCloud password not set in config");
         }
 
-        private class LoginResponse
+        public class LoginResponse
         {
             public string Token { get; set; }
         }
