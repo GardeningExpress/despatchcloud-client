@@ -13,8 +13,16 @@ namespace GardeningExpress.DespatchCloudClient
             services.AddOptions<DespatchCloudConfig>()
                 .Configure<IConfiguration>((settings, configuration) =>
                 {
-                    configuration.GetSection("DespatchCloud")
-                        .Bind(settings);
+                    var configurationSection = configuration
+                        .GetSection("DespatchCloud");
+
+                    var environmentValue = configurationSection
+                        .GetValue<string>("Environment");
+
+                    if (string.IsNullOrEmpty(environmentValue))
+                        throw new Exception("DespatchCloud environment not set in config");
+
+                    configurationSection.Bind(settings);
                 });
 
             services.AddTransient<AddAuthTokenHandler>();

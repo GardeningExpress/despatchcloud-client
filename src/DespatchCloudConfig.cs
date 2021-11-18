@@ -18,7 +18,16 @@ namespace GardeningExpress.DespatchCloudClient
             }
             set => _apiBaseUrl = value;
         }
+
         public string LoginEmailAddress { get; set; }
         public string LoginPassword { get; set; }
+
+        public DespatchCloudEnvironment Environment { get; set; }
+    }
+
+    public enum DespatchCloudEnvironment
+    {
+        Sandbox,
+        Live
     }
 }
