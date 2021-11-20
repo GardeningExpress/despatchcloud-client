@@ -1,22 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace GardeningExpress.DespatchCloudClient.Orders.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO
 {
-    public class DespatchCloudOrderDto
-    {
-        public int total { get; set; }
-        public string per_page { get; set; }
-        public int current_page { get; set; }
-        public int last_page { get; set; }
-        public string next_page_url { get; set; }
-        public string prev_page_url { get; set; }
-        public int from { get; set; }
-        public int to { get; set; }
-        public List<DespatchCloudOrderData> data { get; set; }
-    }
-
     public class DespatchCloudOrderData
     {
         public int id { get; set; }

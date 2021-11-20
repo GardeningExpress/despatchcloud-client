@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
-using System.Text;
 
-namespace GardeningExpress.DespatchCloudClient.Orders.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO
 {
     public class DespatchCloudOrderSearchFilters
     {

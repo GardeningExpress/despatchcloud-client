@@ -1,9 +1,9 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GardeningExpress.DespatchCloudClient
+namespace GardeningExpress.DespatchCloudClient.DTO
 {
-    public class PagedResult<T>
+    public abstract class PagedResult<T>
     {
         [JsonProperty("total")]
         public int Total { get; set; }
