@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient.DTO
 {
-    public abstract class PagedResult<T>
+    public class PagedResult<T>
     {
         [JsonProperty("total")]
         public int Total { get; set; }

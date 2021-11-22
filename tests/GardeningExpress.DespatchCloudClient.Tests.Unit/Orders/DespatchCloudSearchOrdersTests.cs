@@ -4,7 +4,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using GardeningExpress.DespatchCloudClient.Auth;
 using GardeningExpress.DespatchCloudClient.DTO;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -28,9 +27,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             LoginEmailAddress = "test@test.com"
         };
 
-        private GetDespatchCloudAuthenticationTokenByLoggingIn _getDespatchCloudAuthenticationTokenByLoggingIn;
         private Mock<HttpMessageHandler> _handler;
-        private DespatchCloudSearchOrders _DespatchCloudSearchOrders;
+        private DespatchCloudHttpClient _DespatchCloudSearchOrders;
 
         [SetUp]
         public void SetUp()
@@ -38,22 +36,15 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             // All requests made with HttpClient go through its handler's SendAsync() which we mock
             _handler = new Mock<HttpMessageHandler>();
             var httpClient = _handler.CreateClient();
+            httpClient.BaseAddress = new Uri(_despatchCloudConfig.ApiBaseUrl);
+
 
             var mockOptions = new Mock<IOptionsMonitor<DespatchCloudConfig>>();
             mockOptions.SetupGet(x => x.CurrentValue)
                 .Returns(_despatchCloudConfig);
 
-            var mockLogger = new Mock<ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn>>();
+            _DespatchCloudSearchOrders = new DespatchCloudHttpClient(httpClient);
 
-            _getDespatchCloudAuthenticationTokenByLoggingIn = new GetDespatchCloudAuthenticationTokenByLoggingIn(
-                httpClient,
-                mockOptions.Object, mockLogger.Object
-            );
-
-            var mockSearchLogger = new Mock<ILogger<DespatchCloudSearchOrders>>();
-
-            _DespatchCloudSearchOrders = new DespatchCloudSearchOrders(httpClient,
-                mockOptions.Object, mockSearchLogger.Object, _getDespatchCloudAuthenticationTokenByLoggingIn);
         }
 
         [Test]
@@ -65,9 +56,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new DespatchCloudOrderDto { 
-                current_page = 1,
-                data = new List<DespatchCloudOrderData> { 
+            var expectedData = new PagedResult<DespatchCloudOrderData>()
+            {
+                CurrentPage = 1,
+                Data = new List<DespatchCloudOrderData> {
                     new DespatchCloudOrderData { email = values.email }
                 }
             };
@@ -92,9 +84,9 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                     Search = values.email
                 });
 
-            result.data.ShouldNotBeEmpty();
-            result.current_page.ShouldBe<int>(1);
-            result.data[0].email.ShouldBe(values.email);
+            result.Data.ShouldNotBeEmpty();
+            result.CurrentPage.ShouldBe<int>(1);
+            result.Data[0].email.ShouldBe(values.email);
         }
 
         [Test]
@@ -106,10 +98,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new DespatchCloudOrderDto
+            var expectedData = new PagedResult<DespatchCloudOrderData>()
             {
-                current_page = 1,
-                data = new List<DespatchCloudOrderData> {
+                CurrentPage = 1,
+                Data = new List<DespatchCloudOrderData> {
                     new DespatchCloudOrderData { email = values.email }
                 }
             };
@@ -135,9 +127,9 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
             var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(filters);
 
-            result.data.ShouldNotBeEmpty();
-            result.current_page.ShouldBe<int>(1);
-            result.data[0].email.ShouldBe(values.email);
+            result.Data.ShouldNotBeEmpty();
+            result.CurrentPage.ShouldBe<int>(1);
+            result.Data[0].email.ShouldBe(values.email);
         }
     }
 }
