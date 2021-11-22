@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace GardeningExpress.DespatchCloudClient
+namespace GardeningExpress.DespatchCloudClient.DTO
 {
     public class PagedResult<T>
     {
