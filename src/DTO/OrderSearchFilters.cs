@@ -4,24 +4,24 @@ using System.Linq;
 
 namespace GardeningExpress.DespatchCloudClient.DTO
 {
-    public class DespatchCloudOrderSearchFilters
+    public class OrderSearchFilters
     {
         public string Search { get; set; }
         public DateRangeFilter DateRange { get; set; }
-        public DespatchCloudOrderSearchFieldFilters FieldFilters { get; set; }
-        public DespatchCloudOrderSearchSort Sort { get; set; }
+        public OrderSearchFieldFilters FieldFilters { get; set; }
+        public OrderSearchSort Sort { get; set; }
         public int Page { get; set; } = 1;
 
         public string GetQueryString()
         {
-            NameValueCollection queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
+            var queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
             queryString.Add("filters[search]", Search);
 
             if (FieldFilters != 0)
             {
-                var fieldFilters = string.Join(",", Enum.GetValues(typeof(DespatchCloudOrderSearchFieldFilters))
-                .Cast<DespatchCloudOrderSearchFieldFilters>()
-                .Where(s => FieldFilters.HasFlag(s)));
+                var fieldFilters = string.Join(",", Enum.GetValues(typeof(OrderSearchFieldFilters))
+                    .Cast<OrderSearchFieldFilters>()
+                    .Where(s => FieldFilters.HasFlag(s)));
 
                 queryString.Add("filters[search_field]", fieldFilters);
             }
@@ -36,7 +36,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
 
             if (Sort != 0)
             {
-                queryString.Add("sort", Enum.GetName(typeof(DespatchCloudOrderSearchSort), Sort));
+                queryString.Add("sort", Enum.GetName(typeof(OrderSearchSort), Sort));
             }
 
             queryString.Add("page", Page.ToString());
@@ -44,7 +44,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
         }
     }
 
-    public enum DespatchCloudOrderSearchSort
+    public enum OrderSearchSort
     {
         name_az = 1,
         name_za,
@@ -58,7 +58,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
         zone_za
     }
 
-    public enum DespatchCloudOrderSearchFieldFilters
+    public enum OrderSearchFieldFilters
     {
         search_sku = 1 << 0,
         search_order_id = 1 << 1,

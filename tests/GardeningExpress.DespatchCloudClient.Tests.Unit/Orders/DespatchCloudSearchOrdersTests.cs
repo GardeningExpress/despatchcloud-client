@@ -76,7 +76,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
 
             var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(
-                new DespatchCloudOrderSearchFilters
+                new OrderSearchFilters
                 {
                     Search = values.email
                 });
@@ -103,7 +103,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 }
             };
 
-            var filters = new DespatchCloudOrderSearchFilters
+            var filters = new OrderSearchFilters
             {
                 Search = values.email,
                 DateRange = new DateRangeFilter
@@ -111,8 +111,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                     StartDate = new DateTime(2021, 11, 08),
                     EndDate = new DateTime(2021, 11, 09)
                 },
-                Sort = DespatchCloudOrderSearchSort.name_za,
-                FieldFilters = DespatchCloudOrderSearchFieldFilters.search_name
+                Sort = OrderSearchSort.name_za,
+                FieldFilters = OrderSearchFieldFilters.search_name
             };
 
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")

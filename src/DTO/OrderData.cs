@@ -195,7 +195,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
         public string UpdatedAt { get; set; }
 
         [JsonProperty("inventory")]
-        public List<Inventory> Inventory { get; set; }
+        public List<OrderInventory> Inventory { get; set; }
         
         // public string[] shipment { get; set; }
     }
