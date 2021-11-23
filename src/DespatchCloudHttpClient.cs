@@ -40,7 +40,7 @@ namespace GardeningExpress.DespatchCloudClient
         public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
             => await _httpClient.GetAsync(requestUri, cancellationToken);
 
-        public async Task<PagedResult<DespatchCloudOrderData>> SearchOrdersAsync(DespatchCloudOrderSearchFilters orderSearchFilters)
+        public async Task<PagedResult<OrderData>> SearchOrdersAsync(DespatchCloudOrderSearchFilters orderSearchFilters)
         {
             if (string.IsNullOrWhiteSpace(orderSearchFilters.Search))
             {
@@ -51,7 +51,7 @@ namespace GardeningExpress.DespatchCloudClient
 
             if (response.IsSuccessStatusCode)
             {
-                return await SerializeResponse<PagedResult<DespatchCloudOrderData>>(response);
+                return await SerializeResponse<PagedResult<OrderData>>(response);
             }
             else
             {
