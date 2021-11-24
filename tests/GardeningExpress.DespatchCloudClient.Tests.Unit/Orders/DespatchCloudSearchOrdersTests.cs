@@ -17,7 +17,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
     [TestFixture]
     public class DespatchCloudSearchOrdersTests
     {
-
         private readonly DespatchCloudConfig _despatchCloudConfig = new DespatchCloudConfig
         {
             ApiBaseUrl = "https://fake.api",
@@ -54,11 +53,11 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new PagedResult<DespatchCloudOrderData>()
+            var expectedData = new PagedResult<OrderData>()
             {
                 CurrentPage = 1,
-                Data = new List<DespatchCloudOrderData> {
-                    new DespatchCloudOrderData { email = values.email }
+                Data = new List<OrderData> {
+                    new OrderData { Email = values.email }
                 }
             };
 
@@ -77,14 +76,14 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
 
             var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(
-                new DespatchCloudOrderSearchFilters
+                new OrderSearchFilters
                 {
                     Search = values.email
                 });
 
             result.Data.ShouldNotBeEmpty();
             result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].email.ShouldBe(values.email);
+            result.Data[0].Email.ShouldBe(values.email);
         }
 
         [Test]
@@ -96,15 +95,15 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new PagedResult<DespatchCloudOrderData>()
+            var expectedData = new PagedResult<OrderData>()
             {
                 CurrentPage = 1,
-                Data = new List<DespatchCloudOrderData> {
-                    new DespatchCloudOrderData { email = values.email }
+                Data = new List<OrderData> {
+                    new OrderData { Email = values.email }
                 }
             };
 
-            var filters = new DespatchCloudOrderSearchFilters
+            var filters = new OrderSearchFilters
             {
                 Search = values.email,
                 DateRange = new DateRangeFilter
@@ -112,8 +111,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                     StartDate = new DateTime(2021, 11, 08),
                     EndDate = new DateTime(2021, 11, 09)
                 },
-                Sort = DespatchCloudOrderSearchSort.name_za,
-                FieldFilters = DespatchCloudOrderSearchFieldFilters.search_name
+                Sort = OrderSearchSort.name_za,
+                FieldFilters = OrderSearchFieldFilters.search_name
             };
 
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
@@ -127,7 +126,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
             result.Data.ShouldNotBeEmpty();
             result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].email.ShouldBe(values.email);
+            result.Data[0].Email.ShouldBe(values.email);
         }
     }
 }
