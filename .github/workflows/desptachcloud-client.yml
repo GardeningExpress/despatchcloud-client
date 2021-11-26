@@ -43,3 +43,11 @@ jobs:
         pre_release_branches: develop
         release_branches: master
         tag_prefix: ''
+
+    - name: Pack
+      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+      run: dotnet pack -c Release -o ./nupkgs --no-build
+      
+    - name: Publish
+      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+      run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${GITHUB_TOKEN} --skip-duplicate
