@@ -1,0 +1,61 @@
+name: "Build & Release Prod"
+on:
+  # Trigger the workflow on push or pull request,
+  # but only for the develop branch
+  workflow_dispatch:
+    
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+env:
+  DOTNET_VERSION: '3.1.x'
+
+jobs:
+  Build-Release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@master
+
+    - name: Setup DotNet ${{ env.DOTNET_VERSION }} Environment
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: ${{ env.DOTNET_VERSION }}
+        source-url: https://nuget.pkg.github.com/${{github.repository_owner}}/index.json
+      env:
+        NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
+
+    - name: Build project 
+      run: dotnet build --configuration Release
+
+    - name: Bump version and push tag
+      if: github.ref == 'refs/heads/master'
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pre_release_branches: develop
+        release_branches: master
+        tag_prefix: ''
+
+    - name: Pack
+      if: github.ref == 'refs/heads/master'
+      run: dotnet pack -c Release -o ./nupkgs --no-build /p:Version=${{ steps.tag_version.outputs.new_tag }}
+      
+    - name: Publish
+      if: github.ref == 'refs/heads/master'
+      run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${GITHUB_TOKEN} --skip-duplicate
+      env:
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+    
+    - name: Create a GitHub release
+      if: github.ref == 'refs/heads/master'
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ steps.tag_version.outputs.new_tag }}
+        name: Release ${{ steps.tag_version.outputs.new_tag }}
+        body: ${{ steps.tag_version.outputs.changelog }}
