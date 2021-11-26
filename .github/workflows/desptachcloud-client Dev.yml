@@ -1,4 +1,4 @@
-name: "Build & Release"
+name: "Build & Release Dev"
 on:
   # Trigger the workflow on push or pull request,
   # but only for the develop branch
@@ -7,11 +7,9 @@ on:
   push:
     branches:
       - develop
-      - master
   pull_request:
     branches:
       - develop
-      - master
 
 env:
   DOTNET_VERSION: '3.1.x'
@@ -35,7 +33,7 @@ jobs:
       run: dotnet build --configuration Release
 
     - name: Bump version and push tag
-      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/develop'
       id: tag_version
       uses: mathieudutour/github-tag-action@v6.0
       with:
@@ -45,19 +43,11 @@ jobs:
         tag_prefix: ''
 
     - name: Pack
-      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/develop'
       run: dotnet pack -c Release -o ./nupkgs --no-build /p:Version=${{ steps.tag_version.outputs.new_tag }}
       
     - name: Publish
-      if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
+      if: github.ref == 'refs/heads/develop'
       run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${GITHUB_TOKEN} --skip-duplicate
       env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-    
-    - name: Create a GitHub release
-      if: github.ref == 'refs/heads/master'
-      uses: ncipollo/release-action@v1
-      with:
-        tag: ${{ steps.tag_version.outputs.new_tag }}
-        name: Release ${{ steps.tag_version.outputs.new_tag }}
-        body: ${{ steps.tag_version.outputs.changelog }}
