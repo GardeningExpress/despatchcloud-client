@@ -46,7 +46,7 @@ jobs:
 
     - name: Pack
       if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
-      run: dotnet pack -c Release -o ./nupkgs --no-build
+      run: dotnet pack -c Release -o ./nupkgs --no-build /p:Version=${{ steps.tag_version.outputs.new_tag }}
       
     - name: Publish
       if: github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master'
