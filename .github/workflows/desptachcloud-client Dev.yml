@@ -1,4 +1,4 @@
-name: "Build & Deploy DespatchCloud client nuget"
+name: "Build & Release Dev"
 on:
   # Trigger the workflow on push or pull request,
   # but only for the develop branch
@@ -15,7 +15,7 @@ env:
   DOTNET_VERSION: '3.1.x'
 
 jobs:
-  build-and-deploy-nuget:
+  Build-Release:
     runs-on: ubuntu-latest
     steps:
     - name: 'Checkout GitHub Action'
@@ -30,14 +30,24 @@ jobs:
         NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
 
     - name: Build project 
-      run: dotnet build --configuration Release /p:Version=1.6.0
-  
+      run: dotnet build --configuration Release
+
+    - name: Bump version and push tag
+      if: github.ref == 'refs/heads/develop'
+      id: tag_version
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        pre_release_branches: develop
+        release_branches: master
+        tag_prefix: ''
+
     - name: Pack
       if: github.ref == 'refs/heads/develop'
-      run: dotnet pack --configuration Release /p:Version=1.6.0
-
-    - name: Push
+      run: dotnet pack -c Release -o ./nupkgs --no-build /p:Version=${{ steps.tag_version.outputs.new_tag }}
+      
+    - name: Publish
       if: github.ref == 'refs/heads/develop'
-      run: dotnet nuget push "src/bin/Release/*.nupkg" --api-key ${GITHUB_TOKEN} --skip-duplicate
+      run: dotnet nuget push ./nupkgs/*.nupkg --api-key ${GITHUB_TOKEN} --skip-duplicate
       env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
