@@ -25,7 +25,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
         };
 
         private Mock<HttpMessageHandler> _handler;
-        private DespatchCloudHttpClient _DespatchCloudSearchOrders;
+        private DespatchCloudHttpClient _despatchCloudHttpClient;
 
         [SetUp]
         public void SetUp()
@@ -40,7 +40,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             mockOptions.SetupGet(x => x.CurrentValue)
                 .Returns(_despatchCloudConfig);
 
-            _DespatchCloudSearchOrders = new DespatchCloudHttpClient(httpClient);
+            _despatchCloudHttpClient = new DespatchCloudHttpClient(httpClient);
 
         }
 
@@ -64,7 +64,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
                 .ReturnsResponse(JsonConvert.SerializeObject(values), "application/json");
 
-
             _handler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                 ItExpr.Is<HttpRequestMessage>(r => r.Method == HttpMethod.Get && r.RequestUri.ToString().StartsWith("https://fake.api/orders")),
@@ -75,7 +74,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 });
 
 
-            var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(
+            var result = await _despatchCloudHttpClient.SearchOrdersAsync(
                 new OrderSearchFilters
                 {
                     Search = values.email
@@ -95,7 +94,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new PagedResult<OrderData>()
+            var expectedData = new PagedResult<OrderData>
             {
                 CurrentPage = 1,
                 Data = new List<OrderData> {
@@ -119,11 +118,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
                 .ReturnsResponse(JsonConvert.SerializeObject(values), "application/json");
 
-
             _handler.SetupRequest(HttpMethod.Get, $"https://fake.api/orders?{filters.GetQueryString()}")
                 .ReturnsResponse(JsonConvert.SerializeObject(expectedData), "application/json");
 
-            var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(filters);
+            var result = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
 
             filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
             result.Data.ShouldNotBeEmpty();

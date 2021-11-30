@@ -24,7 +24,7 @@ namespace GardeningExpress.DespatchCloudClient
             };
         }
 
-        //todo: remove
+        [Obsolete]
         public async Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken)
         {
             var content = new StringContent(
@@ -36,7 +36,7 @@ namespace GardeningExpress.DespatchCloudClient
             return await _httpClient.PostAsync(requestUri, content, cancellationToken);
         }
 
-        //todo: remove
+        [Obsolete]
         public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
             => await _httpClient.GetAsync(requestUri, cancellationToken);
 
@@ -52,6 +52,21 @@ namespace GardeningExpress.DespatchCloudClient
             if (response.IsSuccessStatusCode)
             {
                 return await SerializeResponse<PagedResult<OrderData>>(response);
+            }
+            else
+            {
+                // todo: let's work out an error handling strategy later
+                throw new Exception("Failed to get data");
+            }
+        }
+
+        public async Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters)
+        {
+            var response = await _httpClient.GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await SerializeResponse<PagedResult<Inventory>>(response);
             }
             else
             {
