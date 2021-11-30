@@ -12,9 +12,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2B1F08B4-86FB-4526-BF06-B11DC92D46A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0219E066-68A9-4134-A58F-3DDF1E06CCF2}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\desptachcloud-client.yml = .github\workflows\desptachcloud-client.yml
-	EndProjectSection
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\desptachcloud-client.yml = .github\workflows\desptachcloud-client.yml
+EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
