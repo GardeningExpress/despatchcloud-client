@@ -1,3 +1,4 @@
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,10 +10,12 @@ namespace GardeningExpress.DespatchCloudClient
     {
         Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters);
 
-        //todo: remove
+        Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters)
+
+        [Obsolete]
         Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken);
 
-        //todo: remove
+        [Obsolete]
         Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken);
     }
 }
