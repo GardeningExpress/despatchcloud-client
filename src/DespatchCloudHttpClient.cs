@@ -23,7 +23,7 @@ namespace GardeningExpress.DespatchCloudClient
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
         }
-
+        
         [Obsolete]
         public async Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken)
         {
@@ -40,7 +40,7 @@ namespace GardeningExpress.DespatchCloudClient
         public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
             => await _httpClient.GetAsync(requestUri, cancellationToken);
 
-        public async Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters)
+        public async Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(orderSearchFilters.Search))
             {
@@ -60,9 +60,10 @@ namespace GardeningExpress.DespatchCloudClient
             }
         }
 
-        public async Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters)
+        public async Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default)
         {
-            var response = await _httpClient.GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}");
+            var response = await _httpClient
+                .GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}", cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {
