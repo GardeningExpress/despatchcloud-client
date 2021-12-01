@@ -8,9 +8,9 @@ namespace GardeningExpress.DespatchCloudClient
 {
     public interface IDespatchCloudHttpClient
     {
-        Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters);
+        Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default);
 
-        Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters);
+        Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default);
 
         [Obsolete]
         Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken);
