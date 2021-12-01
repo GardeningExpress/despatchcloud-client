@@ -10,7 +10,7 @@ namespace GardeningExpress.DespatchCloudClient
     {
         Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters);
 
-        Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters)
+        Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters);
 
         [Obsolete]
         Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken);
