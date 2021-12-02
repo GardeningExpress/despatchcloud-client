@@ -23,7 +23,7 @@ namespace GardeningExpress.DespatchCloudClient
                 MissingMemberHandling = MissingMemberHandling.Ignore
             };
         }
-        
+
         [Obsolete]
         public async Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken)
         {
@@ -40,40 +40,44 @@ namespace GardeningExpress.DespatchCloudClient
         public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
             => await _httpClient.GetAsync(requestUri, cancellationToken);
 
-        public async Task<PagedResult<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default)
+        public async Task<ListResponse<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(orderSearchFilters.Search))
             {
                 throw new Exception("Search filter is required.");
             }
 
-            var response = await _httpClient.GetAsync($"orders?{orderSearchFilters.GetQueryString()}");
+            var response = await _httpClient
+                .GetAsync($"orders?{orderSearchFilters.GetQueryString()}", cancellationToken);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await SerializeResponse<PagedResult<OrderData>>(response);
-            }
-            else
-            {
-                // todo: let's work out an error handling strategy later
-                throw new Exception("Failed to get data");
-            }
+            return response.IsSuccessStatusCode
+                ? await CreateSuccessResponse<ListResponse<OrderData>>(response)
+                : await CreateErrorResponse<ListResponse<OrderData>>(response);
         }
 
-        public async Task<PagedResult<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default)
+        public async Task<ListResponse<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default)
         {
             var response = await _httpClient
                 .GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}", cancellationToken);
 
-            if (response.IsSuccessStatusCode)
-            {
-                return await SerializeResponse<PagedResult<Inventory>>(response);
-            }
-            else
-            {
-                // todo: let's work out an error handling strategy later
-                throw new Exception("Failed to get data");
-            }
+            return response.IsSuccessStatusCode
+                ? await CreateSuccessResponse<ListResponse<Inventory>>(response)
+                : await CreateErrorResponse<ListResponse<Inventory>>(response);
+        }
+
+        private async Task<T> CreateSuccessResponse<T>(HttpResponseMessage response)
+            where T : ApiResponse
+        {
+            var apiResponse = await SerializeResponse<T>(response);
+            return (T)Activator.CreateInstance(typeof(T), apiResponse);
+        }
+
+
+        private async Task<T> CreateErrorResponse<T>(HttpResponseMessage response)
+            where T : ApiResponse
+        {
+            var despatchCloudErrorResponse = await SerializeResponse<DespatchCloudErrorResponse>(response);
+            return (T)Activator.CreateInstance(typeof(T), despatchCloudErrorResponse.Error);
         }
 
         private async Task<T> SerializeResponse<T>(HttpResponseMessage response)

@@ -74,15 +74,15 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 });
 
 
-            var result = await _despatchCloudHttpClient.SearchOrdersAsync(
+            var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(
                 new OrderSearchFilters
                 {
                     Search = values.email
                 });
 
-            result.Data.ShouldNotBeEmpty();
-            result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedResult.Data.ShouldNotBeEmpty();
+            apiResponse.PagedResult.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedResult.Data[0].Email.ShouldBe(values.email);
         }
 
         [Test]
@@ -121,13 +121,13 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler.SetupRequest(HttpMethod.Get, $"https://fake.api/orders?{filters.GetQueryString()}")
                 .ReturnsResponse(JsonConvert.SerializeObject(expectedData), "application/json");
 
-            var result = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
+            var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
 
             filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
-            result.Data.ShouldNotBeEmpty();
-            result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].Email.ShouldBe(values.email);
-            result.Data[0].ChannelId.ShouldBe(3);
+            apiResponse.PagedResult.Data.ShouldNotBeEmpty();
+            apiResponse.PagedResult.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedResult.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedResult.Data[0].ChannelId.ShouldBe(3);
         }
     }
 }
