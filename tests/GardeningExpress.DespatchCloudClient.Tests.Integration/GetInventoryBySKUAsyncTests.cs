@@ -1,6 +1,4 @@
 using System.Threading.Tasks;
-using GardeningExpress.DespatchCloudClient.Auth;
-using GardeningExpress.DespatchCloudClient.DTO;
 using NUnit.Framework;
 using Shouldly;
 
@@ -19,7 +17,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
                 .GetInventoryBySKUAsync("DEAL16071");
 
             result.ShouldNotBeNull();
-            result.Name.ShouldStartWith("Prunus triloba");
+            result.Data.Name.ShouldStartWith("Prunus triloba");
         }
 
         [Test]
@@ -28,7 +26,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             var result = await DespatchCloudHttpClient
                 .GetInventoryBySKUAsync("not_exist");
 
-            result.ShouldBeNull();
+            result.Data.ShouldBeNull();
         }
     }
 }

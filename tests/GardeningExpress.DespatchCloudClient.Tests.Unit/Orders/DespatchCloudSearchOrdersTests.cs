@@ -74,9 +74,9 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                     Search = values.email
                 });
 
-            apiResponse.PagedResult.Data.ShouldNotBeEmpty();
-            apiResponse.PagedResult.CurrentPage.ShouldBe<int>(1);
-            apiResponse.PagedResult.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedData.Data.ShouldNotBeEmpty();
+            apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);
         }
 
         [Test]
@@ -118,10 +118,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
 
             filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
-            apiResponse.PagedResult.Data.ShouldNotBeEmpty();
-            apiResponse.PagedResult.CurrentPage.ShouldBe<int>(1);
-            apiResponse.PagedResult.Data[0].Email.ShouldBe(values.email);
-            apiResponse.PagedResult.Data[0].ChannelId.ShouldBe(3);
+            apiResponse.PagedData.Data.ShouldNotBeEmpty();
+            apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedData.Data[0].ChannelId.ShouldBe(3);
         }
     }
 }

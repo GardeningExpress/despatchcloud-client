@@ -25,8 +25,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             var result = await DespatchCloudHttpClient
                 .SearchInventoryAsync(inventorySearchFilters);
 
-            result.PagedResult.Data.Count.ShouldBe(1);
-            result.PagedResult.Data.First().Name.ShouldStartWith("Prunus triloba");
+            result.PagedData.Data.Count.ShouldBe(1);
+            result.PagedData.Data.First().Name.ShouldStartWith("Prunus triloba");
         }
     }
 }
