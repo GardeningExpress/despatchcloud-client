@@ -29,14 +29,18 @@ namespace GardeningExpress.DespatchCloudClient
 
         public ListResponse(string errorMessage)
             : base(errorMessage)
-        {
-        }
+        { }
 
         public PagedResult<T> PagedResult { get; set; }
     }
 
-    public class GetResponse<T> : ApiResponse
+    public class ApiResponse<T> : ApiResponse
     {
+        public ApiResponse(T result)
+        {
+            Result = result;
+        }
+        
         public T Result { get; set; }
     }
 }

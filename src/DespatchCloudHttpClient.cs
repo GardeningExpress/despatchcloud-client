@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -52,7 +53,9 @@ namespace GardeningExpress.DespatchCloudClient
                 .GetAsync($"orders?{orderSearchFilters.GetQueryString()}", cancellationToken);
 
             if (!response.IsSuccessStatusCode)
-                return await CreateErrorResponse<ListResponse<OrderData>>(response);
+            {
+                return await CreateErrorListResponse<OrderData>(response);
+            }
 
             var pagedResult = await DeserializeResponse<PagedResult<OrderData>>(response);
             return new ListResponse<OrderData>(pagedResult);
@@ -64,13 +67,13 @@ namespace GardeningExpress.DespatchCloudClient
                 .GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}", cancellationToken);
 
             if (!response.IsSuccessStatusCode)
-                return await CreateErrorResponse<ListResponse<Inventory>>(response);
+                return await CreateErrorListResponse<Inventory>(response);
 
             var pagedResult = await DeserializeResponse<PagedResult<Inventory>>(response);
             return new ListResponse<Inventory>(pagedResult);
         }
 
-        public async Task<Inventory> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default)
+        public async Task<ApiResponse<Inventory>> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default)
         {
             var searchFilters = new InventorySearchFilters
             {
@@ -80,23 +83,50 @@ namespace GardeningExpress.DespatchCloudClient
             var response = await SearchInventoryAsync(searchFilters, cancellationToken);
 
             return response.IsSuccess
-                ? response.PagedResult.Data?.FirstOrDefault()
-                : CreateErrorResponse<Inventory>(response.Error);
+                ? new ApiResponse<Inventory>(response.PagedResult.Data?.FirstOrDefault())
+                : (ApiResponse<Inventory>)CreateErrorResponse<Inventory>(response.Error);
         }
 
-
-        private async Task<T> CreateErrorResponse<T>(HttpResponseMessage response)
-            where T : ApiResponse
+        public async Task<ApiResponse<Inventory>> UpdateInventoryAsync(string inventoryId, InventoryUpdateRequest inventoryUpdateRequest, CancellationToken cancellationToken = default)
         {
-            var despatchCloudErrorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
-            return CreateErrorResponse<T>(despatchCloudErrorResponse.Error);
+            var httpContent = SerializeObjectToHttpContent(inventoryUpdateRequest);
+
+            var response = await _httpClient
+                .PostAsync($"inventory/{inventoryId}/update", httpContent, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var deserializeResponse = await DeserializeResponse<Inventory>(response);
+                return new ApiResponse<Inventory>(deserializeResponse);
+            }
+
+            return await CreateErrorApiResponse<Inventory>(response);
         }
 
-        private static T CreateErrorResponse<T>(string errorMessage) => (T)Activator.CreateInstance(typeof(T), errorMessage);
+        private async Task<ListResponse<T>> CreateErrorListResponse<T>(HttpResponseMessage response)
+        {
+            var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
+            return (ListResponse<T>)CreateErrorResponse<T>(errorResponse.Error);
+        }
+
+        private async Task<ApiResponse<T>> CreateErrorApiResponse<T>(HttpResponseMessage response)
+        {
+            var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
+            return (ApiResponse<T>)CreateErrorResponse<T>(errorResponse.Error);
+        }
+
+        private static ApiResponse CreateErrorResponse<T>(string errorMessage)
+        {
+            return (ApiResponse<T>)Activator.CreateInstance(typeof(T), errorMessage);
+        }
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
+            => JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync(), _jsonSerializerSettings);
+
+        private HttpContent SerializeObjectToHttpContent(object obj)
         {
-            return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync(), _jsonSerializerSettings);
+            var json = JsonConvert.SerializeObject(obj, _jsonSerializerSettings);
+            return new StringContent(json, Encoding.UTF8, "application/json");
         }
     }
 }
