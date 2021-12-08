@@ -99,7 +99,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             {
                 CurrentPage = 1,
                 Data = new List<OrderData> {
-                    new OrderData { Email = values.email }
+                    new OrderData { Email = values.email, ChannelId = 3 }
                 }
             };
 
@@ -112,7 +112,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                     EndDate = new DateTime(2021, 11, 09)
                 },
                 Sort = OrderSearchSort.name_za,
-                FieldFilters = OrderSearchFieldFilters.search_name
+                FieldFilters = OrderSearchFieldFilters.search_name,
+                Channel = "3"
             };
 
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
@@ -124,9 +125,11 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
             var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(filters);
 
+            filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
             result.Data.ShouldNotBeEmpty();
             result.CurrentPage.ShouldBe<int>(1);
             result.Data[0].Email.ShouldBe(values.email);
+            result.Data[0].ChannelId.ShouldBe(3);
         }
     }
 }

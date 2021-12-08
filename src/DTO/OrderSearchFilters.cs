@@ -11,6 +11,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
         public OrderSearchFieldFilters FieldFilters { get; set; }
         public OrderSearchSort Sort { get; set; }
         public int Page { get; set; } = 1;
+        public string Channel { get; set; }
 
         public string GetQueryString()
         {
@@ -32,6 +33,11 @@ namespace GardeningExpress.DespatchCloudClient.DTO
                     DateRange.EndTimestamp);
 
                 queryString.Add("filters[date_range]", timestamp);
+            }
+
+            if (!string.IsNullOrEmpty(Channel))
+            {
+                queryString.Add("filters[sales_channel]", Channel);
             }
 
             if (Sort != 0)
