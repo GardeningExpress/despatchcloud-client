@@ -60,12 +60,12 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             }
             catch (Exception ex)
             {
-                throw new Exception("Could not get DespatchCloud Token", ex);
+                throw new ApiAuthenticationException(ex);
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
-                throw new Exception("Could not get DespatchCloud Token - Invalid Credentials");
+                throw new ApiAuthenticationException("Could not get DespatchCloud Token - Invalid Credentials");
             }
 
             var content = await responseMessage.Content.ReadAsStringAsync();

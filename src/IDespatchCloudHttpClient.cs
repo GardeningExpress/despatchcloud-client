@@ -12,6 +12,8 @@ namespace GardeningExpress.DespatchCloudClient
 
         Task<ListResponse<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default);
 
+        Task<Inventory> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default);
+        
         [Obsolete]
         Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken);
 

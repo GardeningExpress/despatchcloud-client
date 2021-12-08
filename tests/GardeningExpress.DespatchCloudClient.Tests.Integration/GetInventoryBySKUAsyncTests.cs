@@ -1,4 +1,3 @@
-﻿using System.Linq;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.Auth;
 using GardeningExpress.DespatchCloudClient.DTO;
@@ -7,7 +6,7 @@ using Shouldly;
 
 namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
-    public class SearchInventoryAsyncTests : BaseIntegrationTests
+    public class GetInventoryBySKUAsyncTests : BaseIntegrationTests
     {
         [Test]
         public void Throws_ApiAuthenticationException_When_Auth_Fails()
@@ -19,26 +18,28 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             CreateHttpClient();
 
             // Act / Assert
-            var inventorySearchFilters = new InventorySearchFilters();
 
             Assert.ThrowsAsync<ApiAuthenticationException>(() => DespatchCloudHttpClient
-                .SearchInventoryAsync(inventorySearchFilters));
+                .GetInventoryBySKUAsync("anything"));
         }
 
         [Test]
         public async Task Returns_Inventory_For_SKU()
         {
-            var inventorySearchFilters = new InventorySearchFilters
-            {
-                SKU = "DEAL16071"
-            };
-
             var result = await DespatchCloudHttpClient
-                .SearchInventoryAsync(inventorySearchFilters);
+                .GetInventoryBySKUAsync("DEAL16071");
 
-            result.PagedResult.Data.Count.ShouldBe(1);
+            result.ShouldNotBeNull();
+            result.Name.ShouldStartWith("Prunus triloba");
+        }
 
-            result.PagedResult.Data.First().Name.ShouldStartWith("Prunus triloba");
+        [Test]
+        public async Task Returns_Null_For_SKU_That_Does_Not_Exist()
+        {
+            var result = await DespatchCloudHttpClient
+                .GetInventoryBySKUAsync("not_exist");
+
+            result.ShouldBeNull();
         }
     }
 }

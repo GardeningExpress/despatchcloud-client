@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -50,9 +51,11 @@ namespace GardeningExpress.DespatchCloudClient
             var response = await _httpClient
                 .GetAsync($"orders?{orderSearchFilters.GetQueryString()}", cancellationToken);
 
-            return response.IsSuccessStatusCode
-                ? await CreateSuccessResponse<ListResponse<OrderData>>(response)
-                : await CreateErrorResponse<ListResponse<OrderData>>(response);
+            if (!response.IsSuccessStatusCode)
+                return await CreateErrorResponse<ListResponse<OrderData>>(response);
+
+            var pagedResult = await DeserializeResponse<PagedResult<OrderData>>(response);
+            return new ListResponse<OrderData>(pagedResult);
         }
 
         public async Task<ListResponse<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default)
@@ -60,27 +63,38 @@ namespace GardeningExpress.DespatchCloudClient
             var response = await _httpClient
                 .GetAsync($"inventory?{inventorySearchFilters.GetQueryString()}", cancellationToken);
 
-            return response.IsSuccessStatusCode
-                ? await CreateSuccessResponse<ListResponse<Inventory>>(response)
-                : await CreateErrorResponse<ListResponse<Inventory>>(response);
+            if (!response.IsSuccessStatusCode)
+                return await CreateErrorResponse<ListResponse<Inventory>>(response);
+
+            var pagedResult = await DeserializeResponse<PagedResult<Inventory>>(response);
+            return new ListResponse<Inventory>(pagedResult);
         }
 
-        private async Task<T> CreateSuccessResponse<T>(HttpResponseMessage response)
-            where T : ApiResponse
+        public async Task<Inventory> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default)
         {
-            var apiResponse = await SerializeResponse<T>(response);
-            return (T)Activator.CreateInstance(typeof(T), apiResponse);
+            var searchFilters = new InventorySearchFilters
+            {
+                SKU = sku
+            };
+
+            var response = await SearchInventoryAsync(searchFilters, cancellationToken);
+
+            return response.IsSuccess
+                ? response.PagedResult.Data?.FirstOrDefault()
+                : CreateErrorResponse<Inventory>(response.Error);
         }
 
 
         private async Task<T> CreateErrorResponse<T>(HttpResponseMessage response)
             where T : ApiResponse
         {
-            var despatchCloudErrorResponse = await SerializeResponse<DespatchCloudErrorResponse>(response);
-            return (T)Activator.CreateInstance(typeof(T), despatchCloudErrorResponse.Error);
+            var despatchCloudErrorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
+            return CreateErrorResponse<T>(despatchCloudErrorResponse.Error);
         }
 
-        private async Task<T> SerializeResponse<T>(HttpResponseMessage response)
+        private static T CreateErrorResponse<T>(string errorMessage) => (T)Activator.CreateInstance(typeof(T), errorMessage);
+
+        private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
         {
             return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync(), _jsonSerializerSettings);
         }

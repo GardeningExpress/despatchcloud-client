@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Moq.Protected;
@@ -34,12 +33,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler = new Mock<HttpMessageHandler>();
             var httpClient = _handler.CreateClient();
             httpClient.BaseAddress = new Uri(_despatchCloudConfig.ApiBaseUrl);
-
-
-            var mockOptions = new Mock<IOptionsMonitor<DespatchCloudConfig>>();
-            mockOptions.SetupGet(x => x.CurrentValue)
-                .Returns(_despatchCloudConfig);
-
+            
             _despatchCloudHttpClient = new DespatchCloudHttpClient(httpClient);
 
         }
