@@ -8,20 +8,9 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
     public class GetInventoryBySKUAsyncTests : BaseIntegrationTests
     {
-        [Test]
-        public void Throws_ApiAuthenticationException_When_Auth_Fails()
-        {
-            // Arrange
-            LoginPassword = "secret";
-            LoginEmailAddress = "test@test.com";
-
-            CreateHttpClient();
-
-            // Act / Assert
-
-            Assert.ThrowsAsync<ApiAuthenticationException>(() => DespatchCloudHttpClient
-                .GetInventoryBySKUAsync("anything"));
-        }
+        protected override Task MethodForAuthTest() =>
+            DespatchCloudHttpClient
+                .GetInventoryBySKUAsync("anything");
 
         [Test]
         public async Task Returns_Inventory_For_SKU()

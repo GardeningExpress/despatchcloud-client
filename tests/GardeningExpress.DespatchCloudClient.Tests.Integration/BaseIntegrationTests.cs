@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.Auth;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,21 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 
             CreateHttpClient();
         }
+        
+        [Test]
+        public void Throws_ApiAuthenticationException_When_Auth_Fails()
+        {
+            // Arrange
+            LoginPassword = "secret";
+            LoginEmailAddress = "test@test.com";
+
+            CreateHttpClient();
+
+            // Act / Assert
+            Assert.ThrowsAsync<ApiAuthenticationException>(MethodForAuthTest);
+        }
+
+        protected abstract Task MethodForAuthTest();
 
         protected void CreateHttpClient()
         {

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
-using GardeningExpress.DespatchCloudClient.Auth;
 using GardeningExpress.DespatchCloudClient.DTO;
 using NUnit.Framework;
 using Shouldly;
@@ -9,20 +8,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
     public class SearchInventoryAsyncTests : BaseIntegrationTests
     {
-        [Test]
-        public void Throws_ApiAuthenticationException_When_Auth_Fails()
+        protected override Task MethodForAuthTest()
         {
-            // Arrange
-            LoginPassword = "secret";
-            LoginEmailAddress = "test@test.com";
-
-            CreateHttpClient();
-
-            // Act / Assert
-            var inventorySearchFilters = new InventorySearchFilters();
-
-            Assert.ThrowsAsync<ApiAuthenticationException>(() => DespatchCloudHttpClient
-                .SearchInventoryAsync(inventorySearchFilters));
+            return DespatchCloudHttpClient
+                .SearchInventoryAsync(new InventorySearchFilters());
         }
 
         [Test]
@@ -37,7 +26,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
                 .SearchInventoryAsync(inventorySearchFilters);
 
             result.PagedResult.Data.Count.ShouldBe(1);
-
             result.PagedResult.Data.First().Name.ShouldStartWith("Prunus triloba");
         }
     }
