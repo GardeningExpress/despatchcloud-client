@@ -47,7 +47,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
         }
 
         [Test]
-        public void Throw_exception_if_DespatchCloud_returns_401()
+        public void Throw_ApiAuthenticationException_if_DespatchCloud_returns_401()
         {
             // Arrange
             _handler.SetupAnyRequest()
@@ -55,7 +55,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
 
             // Act
             var exception = Assert
-                .ThrowsAsync<Exception>(() => _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync());
+                .ThrowsAsync<ApiAuthenticationException>(() => _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync());
 
             exception.Message.ShouldBe("Could not get DespatchCloud Token - Invalid Credentials");
         }
