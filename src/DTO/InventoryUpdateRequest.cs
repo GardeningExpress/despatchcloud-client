@@ -3,11 +3,8 @@ using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient.DTO
 {
-    public class Inventory
+    public class InventoryUpdateRequest
     {
-        [JsonProperty("id")]
-        public string Id { get; set; }
-
         [JsonProperty("type")]
         public string Type { get; set; }
 
@@ -16,12 +13,6 @@ namespace GardeningExpress.DespatchCloudClient.DTO
 
         [JsonProperty("name")]
         public string Name { get; set; }
-
-        [JsonProperty("created_at")]
-        public string CreatedAt { get; set; }
-
-        [JsonProperty("updated_at")]
-        public string UpdatedAt { get; set; }
 
         [JsonProperty("image")]
         public string Image { get; set; }

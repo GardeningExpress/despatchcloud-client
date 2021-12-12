@@ -4,7 +4,6 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO;
-using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Moq.Protected;
@@ -25,7 +24,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
         };
 
         private Mock<HttpMessageHandler> _handler;
-        private DespatchCloudHttpClient _DespatchCloudSearchOrders;
+        private DespatchCloudHttpClient _despatchCloudHttpClient;
 
         [SetUp]
         public void SetUp()
@@ -34,13 +33,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler = new Mock<HttpMessageHandler>();
             var httpClient = _handler.CreateClient();
             httpClient.BaseAddress = new Uri(_despatchCloudConfig.ApiBaseUrl);
-
-
-            var mockOptions = new Mock<IOptionsMonitor<DespatchCloudConfig>>();
-            mockOptions.SetupGet(x => x.CurrentValue)
-                .Returns(_despatchCloudConfig);
-
-            _DespatchCloudSearchOrders = new DespatchCloudHttpClient(httpClient);
+            
+            _despatchCloudHttpClient = new DespatchCloudHttpClient(httpClient);
 
         }
 
@@ -64,7 +58,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
                 .ReturnsResponse(JsonConvert.SerializeObject(values), "application/json");
 
-
             _handler.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                 ItExpr.Is<HttpRequestMessage>(r => r.Method == HttpMethod.Get && r.RequestUri.ToString().StartsWith("https://fake.api/orders")),
@@ -75,15 +68,15 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 });
 
 
-            var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(
+            var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(
                 new OrderSearchFilters
                 {
                     Search = values.email
                 });
 
-            result.Data.ShouldNotBeEmpty();
-            result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedData.Data.ShouldNotBeEmpty();
+            apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);
         }
 
         [Test]
@@ -95,7 +88,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 email = "demo@mail.com"
             };
 
-            var expectedData = new PagedResult<OrderData>()
+            var expectedData = new PagedResult<OrderData>
             {
                 CurrentPage = 1,
                 Data = new List<OrderData> {
@@ -119,17 +112,16 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             _handler.SetupRequest(HttpMethod.Post, "https://fake.api/auth/login")
                 .ReturnsResponse(JsonConvert.SerializeObject(values), "application/json");
 
-
             _handler.SetupRequest(HttpMethod.Get, $"https://fake.api/orders?{filters.GetQueryString()}")
                 .ReturnsResponse(JsonConvert.SerializeObject(expectedData), "application/json");
 
-            var result = await _DespatchCloudSearchOrders.SearchOrdersAsync(filters);
+            var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
 
             filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
-            result.Data.ShouldNotBeEmpty();
-            result.CurrentPage.ShouldBe<int>(1);
-            result.Data[0].Email.ShouldBe(values.email);
-            result.Data[0].ChannelId.ShouldBe(3);
+            apiResponse.PagedData.Data.ShouldNotBeEmpty();
+            apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
+            apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);
+            apiResponse.PagedData.Data[0].ChannelId.ShouldBe(3);
         }
     }
 }

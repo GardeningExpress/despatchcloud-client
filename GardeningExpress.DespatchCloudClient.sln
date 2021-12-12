@@ -12,9 +12,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{2B1F08B4-86FB-4526-BF06-B11DC92D46A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{0219E066-68A9-4134-A58F-3DDF1E06CCF2}"
-	ProjectSection(SolutionItems) = preProject
-		.github\workflows\desptachcloud-client.yml = .github\workflows\desptachcloud-client.yml
-	EndProjectSection
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\desptachcloud-client.yml = .github\workflows\desptachcloud-client.yml
+EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GardeningExpress.DespatchCloudClient.Tests.Integration", "tests\GardeningExpress.DespatchCloudClient.Tests.Integration\GardeningExpress.DespatchCloudClient.Tests.Integration.csproj", "{4A5DA354-B7AA-42F6-A605-E40C15B02AA5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{E12B524D-0ED1-4AEB-876B-A3124A0D33B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E12B524D-0ED1-4AEB-876B-A3124A0D33B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E12B524D-0ED1-4AEB-876B-A3124A0D33B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A5DA354-B7AA-42F6-A605-E40C15B02AA5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A5DA354-B7AA-42F6-A605-E40C15B02AA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A5DA354-B7AA-42F6-A605-E40C15B02AA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A5DA354-B7AA-42F6-A605-E40C15B02AA5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -37,6 +43,7 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{E12B524D-0ED1-4AEB-876B-A3124A0D33B2} = {CCF55D28-379C-4408-9E1B-4F107FB2A1A5}
 		{0219E066-68A9-4134-A58F-3DDF1E06CCF2} = {2B1F08B4-86FB-4526-BF06-B11DC92D46A1}
+		{4A5DA354-B7AA-42F6-A605-E40C15B02AA5} = {CCF55D28-379C-4408-9E1B-4F107FB2A1A5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {09D8D444-250E-4184-9715-1948834570ED}
