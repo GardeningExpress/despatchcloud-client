@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
+
+    <PropertyGroup>
+        <UserSecretsId>dc-client-integration-tests-bf4e2e40-30e1-42e6-87ca-8f88390a414c</UserSecretsId>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\..\src\GardeningExpress.DespatchCloudClient.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <DotNetCliToolReference Include="Microsoft.Extensions.SecretManager.Tools" Version="1.0.1" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="3.1.20" />
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+        <PackageReference Include="Moq" Version="4.16.1" />
+        <PackageReference Include="NUnit" Version="3.13.2" />
+        <PackageReference Include="Shouldly" Version="4.0.3" />
+    </ItemGroup>
+
+</Project>
