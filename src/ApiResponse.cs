@@ -39,8 +39,7 @@ namespace GardeningExpress.DespatchCloudClient
     {
         public ApiResponse(string errorMessage)
             : base(errorMessage)
-        {
-        }
+        { }
 
         public ApiResponse(T data)
         {
