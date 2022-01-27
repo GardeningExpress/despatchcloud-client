@@ -99,13 +99,14 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             var filters = new OrderSearchFilters
             {
                 Search = values.email,
+                SearchField = OrderSearchFieldFilters.search_email,
+
                 DateRange = new DateRangeFilter
                 {
                     StartDate = new DateTime(2021, 11, 08),
                     EndDate = new DateTime(2021, 11, 09)
                 },
                 Sort = OrderSearchSort.name_za,
-                FieldFilters = OrderSearchFieldFilters.search_name,
                 Channel = "3"
             };
 
@@ -117,7 +118,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 
             var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(filters);
 
-            filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_name&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
+            filters.GetQueryString().ShouldBe("filters[search]=demo%40mail.com&filters[search_field]=search_email&filters[date_range]=1636329600%2c1636416000&filters[sales_channel]=3&sort=name_za&page=1");
             apiResponse.PagedData.Data.ShouldNotBeEmpty();
             apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
             apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);

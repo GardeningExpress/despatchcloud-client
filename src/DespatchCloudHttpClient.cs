@@ -1,7 +1,6 @@
 using System;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,6 +12,7 @@ namespace GardeningExpress.DespatchCloudClient
     public class DespatchCloudHttpClient : IDespatchCloudHttpClient
     {
         private readonly HttpClient _httpClient;
+
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
         public DespatchCloudHttpClient(HttpClient httpClient)
@@ -59,6 +59,28 @@ namespace GardeningExpress.DespatchCloudClient
 
             var pagedResult = await DeserializeResponse<PagedResult<OrderData>>(response);
             return new ListResponse<OrderData>(pagedResult);
+        }
+
+        public async Task<ApiResponse<OrderData>> GetOrderByChannelOrderIdAsync(string orderId, CancellationToken cancellationToken = default)
+        {
+            var searchFilter = new OrderSearchFilters
+            {
+                Search = orderId
+            };
+
+            var response = await SearchOrdersAsync(searchFilter, cancellationToken);
+
+            if (!response.IsSuccess)
+                return CreateErrorApiResponse<OrderData>(response.Error);
+
+            if (response.PagedData.Total > 1)
+            {
+                // todo: throw error?
+            }
+
+            var orderData = response.PagedData.Data.FirstOrDefault();
+
+            return new ApiResponse<OrderData>(orderData);
         }
 
         public async Task<ListResponse<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default)
@@ -115,11 +137,11 @@ namespace GardeningExpress.DespatchCloudClient
             return CreateErrorApiResponse<T>(errorResponse.Error);
         }
 
-        private static ApiResponse<T> CreateErrorApiResponse<T>(string errorMessage) 
-            => (ApiResponse<T>)Activator.CreateInstance(typeof(T), errorMessage);
+        private static ApiResponse<T> CreateErrorApiResponse<T>(string errorMessage)
+            => new ApiResponse<T>(errorMessage);
 
-        private static ListResponse<T> CreateErrorListResponse<T>(string errorMessage) 
-            => (ListResponse<T>)Activator.CreateInstance(typeof(ListResponse<T>), errorMessage);
+        private static ListResponse<T> CreateErrorListResponse<T>(string errorMessage)
+            => new ListResponse<T>(errorMessage);
 
         private async Task<T> DeserializeResponse<T>(HttpResponseMessage response)
             => JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync(), _jsonSerializerSettings);
