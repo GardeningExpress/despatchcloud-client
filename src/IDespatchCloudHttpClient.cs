@@ -10,6 +10,8 @@ namespace GardeningExpress.DespatchCloudClient
     {
         Task<ListResponse<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default);
 
+        Task<ApiResponse<OrderData>> GetOrderByChannelOrderIdAsync(string orderId, CancellationToken cancellationToken = default);
+        
         Task<ListResponse<Inventory>> SearchInventoryAsync(InventorySearchFilters inventorySearchFilters, CancellationToken cancellationToken = default);
 
         Task<ApiResponse<Inventory>> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default);

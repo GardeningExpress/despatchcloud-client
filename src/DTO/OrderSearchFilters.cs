@@ -8,7 +8,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO
     {
         public string Search { get; set; }
         public DateRangeFilter DateRange { get; set; }
-        public OrderSearchFieldFilters FieldFilters { get; set; }
+        public OrderSearchFieldFilters SearchField { get; set; }
         public OrderSearchSort Sort { get; set; }
         public int Page { get; set; } = 1;
         public string Channel { get; set; }
@@ -18,11 +18,11 @@ namespace GardeningExpress.DespatchCloudClient.DTO
             var queryString = System.Web.HttpUtility.ParseQueryString(string.Empty);
             queryString.Add("filters[search]", Search);
 
-            if (FieldFilters != 0)
+            if (SearchField != 0)
             {
                 var fieldFilters = string.Join(",", Enum.GetValues(typeof(OrderSearchFieldFilters))
                     .Cast<OrderSearchFieldFilters>()
-                    .Where(s => FieldFilters.HasFlag(s)));
+                    .Where(s => SearchField.HasFlag(s)));
 
                 queryString.Add("filters[search_field]", fieldFilters);
             }
