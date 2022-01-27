@@ -16,12 +16,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
     [TestFixture]
     public class GetDespatchCloudAuthenticationTokenByLoggingInShould
     {
-        private readonly DespatchCloudConfig _despatchCloudConfig = new DespatchCloudConfig
-        {
-            ApiBaseUrl = "https://despatch.cloud/api",
-            LoginPassword = "password",
-            LoginEmailAddress = "email@domain.com"
-        };
+        private DespatchCloudConfig _despatchCloudConfig;
 
         private GetDespatchCloudAuthenticationTokenByLoggingIn _getDespatchCloudAuthenticationTokenByLoggingIn;
         private Mock<HttpMessageHandler> _handler;
@@ -34,6 +29,13 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             var httpClient = _handler.CreateClient();
             httpClient.BaseAddress = new Uri("https://test.go");
 
+            _despatchCloudConfig = new DespatchCloudConfig
+            {
+                ApiBaseUrl = "https://despatch.cloud/api",
+                LoginPassword = "password",
+                LoginEmailAddress = "email@domain.com"
+            };
+
             var mockOptions = new Mock<IOptionsMonitor<DespatchCloudConfig>>();
             mockOptions.SetupGet(x => x.CurrentValue)
                 .Returns(_despatchCloudConfig);
@@ -44,6 +46,29 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
                 httpClient,
                 mockOptions.Object, mockLogger.Object
             );
+        }
+
+        [TestCase("email@domain.com", "")]
+        [TestCase("email@domain.com", null)]
+        public void Throw_ApiAuthenticationException_If_Email_Or_Password_Is_Null_Or_Empty(string loginEmailAddress, string loginPassword)
+        {
+            var tokenResponse = new
+            {
+                token = "this.a.token"
+            };
+
+            _handler.SetupAnyRequest()
+                .ReturnsResponse(JsonConvert.SerializeObject(tokenResponse), "application/json");
+            
+            _despatchCloudConfig.LoginPassword = loginEmailAddress;
+            _despatchCloudConfig.LoginPassword = loginPassword;
+
+            // Act
+            var exception = Assert
+                .ThrowsAsync<ApiAuthenticationException>(() => _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync());
+
+            exception.Message.ShouldBe("Error authenticating with DespatchCloud");
+            exception.InnerException.Message.ShouldBe("DespatchCloud password not set in config");
         }
 
         [Test]
