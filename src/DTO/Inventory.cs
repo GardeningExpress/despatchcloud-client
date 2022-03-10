@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GardeningExpress.DespatchCloudClient.JsonConverters;
 using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient.DTO
@@ -27,6 +28,8 @@ namespace GardeningExpress.DespatchCloudClient.DTO
         public string Image { get; set; }
 
         [JsonProperty("custom_fields")]
+        [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
+
         public Dictionary<string, object> CustomFields { get; set; }
     }
 }
