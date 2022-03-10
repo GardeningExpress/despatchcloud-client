@@ -17,6 +17,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
                 .GetInventoryBySKUAsync("DEAL16071");
 
             result.ShouldNotBeNull();
+            result.Data.ShouldNotBeNull();
+            result.Data.Name.ShouldNotBeNullOrEmpty();
             result.Data.Name.ShouldStartWith("Prunus triloba");
         }
 
