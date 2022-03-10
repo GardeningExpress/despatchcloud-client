@@ -29,7 +29,6 @@ namespace GardeningExpress.DespatchCloudClient.DTO
 
         [JsonProperty("custom_fields")]
         [JsonConverter(typeof(EmptyArrayOrDictionaryConverter))]
-
         public Dictionary<string, object> CustomFields { get; set; }
     }
 }
