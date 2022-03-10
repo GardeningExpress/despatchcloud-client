@@ -21,6 +21,20 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
         }
 
         [Test]
+        public async Task Returns_Inventory_For_SKU_With_Malformed_CustomFields()
+        {
+            var result = await DespatchCloudHttpClient
+                .GetInventoryBySKUAsync("PP23235");
+
+            result.ShouldNotBeNull();
+            result.Data.ShouldNotBeNull();
+            result.Data.Name.ShouldNotBeNullOrEmpty();
+            result.Data.Name.ShouldStartWith("Bellis Hot Pink");
+            
+            result.Data.CustomFields.ShouldBeEmpty();
+        }
+
+        [Test]
         public async Task Returns_Null_For_SKU_That_Does_Not_Exist()
         {
             var result = await DespatchCloudHttpClient
