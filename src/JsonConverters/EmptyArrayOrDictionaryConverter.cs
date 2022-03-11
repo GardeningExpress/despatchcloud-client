@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -20,31 +21,29 @@ namespace GardeningExpress.DespatchCloudClient.JsonConverters
             {
                 JTokenType.Object => token.ToObject(objectType, serializer),
                 JTokenType.Array when !token.HasValues => new Dictionary<string, object>(),
-                JTokenType.Array when token.HasValues => Go(token, serializer),
+                JTokenType.Array when token.HasValues => SerializeArrayToDictionary(token),
                 JTokenType.Null => new Dictionary<string, object>(),
                 _ => throw new JsonSerializationException("Object or empty array expected")
             };
         }
 
-        private Dictionary<string, object> Go(JToken token, JsonSerializer serializer)
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            serializer.Serialize(writer, value);
+        }
+        
+        private Dictionary<string, object> SerializeArrayToDictionary(JToken token)
         {
             var result = new Dictionary<string, object>();
 
             if (token is JArray jArray)
-                foreach (var jToken in jArray.Children<JToken>())
+                foreach (var (key, value) in jArray.Children<JToken>()
+                    .SelectMany(j => j.ToObject<Dictionary<string, object>>()))
                 {
-                    foreach (var (key, value) in jToken.ToObject<Dictionary<string, object>>())
-                    {
-                        result.Add(key, value);
-                    }
+                    result.Add(key, value);
                 }
 
             return result;
-        }
-
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            serializer.Serialize(writer, value);
         }
     }
 }
