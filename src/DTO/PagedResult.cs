@@ -5,6 +5,11 @@ namespace GardeningExpress.DespatchCloudClient.DTO
 {
     public class PagedResult<T>
     {
+        public PagedResult()
+        {
+            Data = new List<T>();
+        }
+        
         [JsonProperty("total")]
         public int Total { get; set; }
 
