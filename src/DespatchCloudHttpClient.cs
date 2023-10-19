@@ -128,7 +128,12 @@ namespace GardeningExpress.DespatchCloudClient
         private async Task<ListResponse<T>> CreateErrorListResponse<T>(HttpResponseMessage response)
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
-            return CreateErrorListResponse<T>(errorResponse.Error);
+
+            var errorMessage = errorResponse != null 
+                ? errorResponse.Error 
+                : $"Response from DespatchCloud: {response.StatusCode}";
+            
+            return CreateErrorListResponse<T>(errorMessage);
         }
 
         private async Task<ApiResponse<T>> CreateErrorApiResponse<T>(HttpResponseMessage response)
