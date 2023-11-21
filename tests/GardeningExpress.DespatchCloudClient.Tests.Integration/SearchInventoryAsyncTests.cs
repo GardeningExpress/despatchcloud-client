@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO;
+using GardeningExpress.DespatchCloudClient.DTO.Filter;
 using NUnit.Framework;
 using Shouldly;
 

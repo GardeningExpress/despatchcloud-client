@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace GardeningExpress.DespatchCloudClient.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO.Filter
 {
     public class OrderSearchFilters
     {

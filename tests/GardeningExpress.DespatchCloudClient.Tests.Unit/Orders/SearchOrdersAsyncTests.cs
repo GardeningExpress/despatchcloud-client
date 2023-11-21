@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO;
+using GardeningExpress.DespatchCloudClient.DTO.Filter;
 using GardeningExpress.DespatchCloudClient.DTO.Response;
 using Moq;
 using Moq.Contrib.HttpClient;

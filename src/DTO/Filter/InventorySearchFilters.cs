@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace GardeningExpress.DespatchCloudClient.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO.Filter
 {
     public class InventorySearchFilters
     {

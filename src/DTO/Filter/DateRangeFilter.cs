@@ -1,6 +1,6 @@
 using System;
 
-namespace GardeningExpress.DespatchCloudClient.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO.Filter
 {
     public class DateRangeFilter
     {
