@@ -3,13 +3,8 @@ using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient.DTO.Response
 {
-    public class PagedResult<T>
+    public sealed class PagedResult<T>
     {
-        public PagedResult()
-        {
-            Data = new List<T>();
-        }
-        
         [JsonProperty("total")]
         public int Total { get; set; }
 
@@ -35,6 +30,6 @@ namespace GardeningExpress.DespatchCloudClient.DTO.Response
         public int To { get; set; }
 
         [JsonProperty("data")]
-        public List<T> Data { get; set; }
+        public List<T> Data { get; set; } = new List<T>();
     }
 }
