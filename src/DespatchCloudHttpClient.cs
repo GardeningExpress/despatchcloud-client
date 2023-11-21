@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO;
+using GardeningExpress.DespatchCloudClient.DTO.Response;
 using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient

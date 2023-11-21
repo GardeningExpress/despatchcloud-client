@@ -2,7 +2,7 @@
 using GardeningExpress.DespatchCloudClient.JsonConverters;
 using Newtonsoft.Json;
 
-namespace GardeningExpress.DespatchCloudClient.DTO
+namespace GardeningExpress.DespatchCloudClient.DTO.Response
 {
     public class Inventory
     {

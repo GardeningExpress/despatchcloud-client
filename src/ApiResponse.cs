@@ -1,4 +1,5 @@
 using GardeningExpress.DespatchCloudClient.DTO;
+using GardeningExpress.DespatchCloudClient.DTO.Response;
 
 namespace GardeningExpress.DespatchCloudClient
 {

@@ -11,7 +11,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_empty_array_custom_fields()
         {
             var json = "{\"custom_fields\": []}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.ShouldBeEmpty();
         }
@@ -20,7 +20,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_null_custom_fields()
         {
             var json = "{\"custom_fields\": null}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.ShouldBeEmpty();
         }
@@ -29,7 +29,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_object_custom_fields_with_one_item()
         {
             var json = "{\"custom_fields\": {\"pot-size-3\": \"6 Litre\"}}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.Count.ShouldBe(1);
             result.CustomFields.ShouldContainKeyAndValue("pot-size-3", "6 Litre");
@@ -39,7 +39,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_object_custom_fields_with_one_item_int_value()
         {
             var json = "{\"custom_fields\": {\"pot-size-3\": 123}}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.Count.ShouldBe(1);
             result.CustomFields.ShouldContainKey("pot-size-3");
@@ -54,7 +54,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_array_custom_fields_with_one_item()
         {
             var json = "{\"custom_fields\": [{\"pot-size-3\": \"6 Litre\"}]}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.Count.ShouldBe(1);
             result.CustomFields.ShouldContainKeyAndValue("pot-size-3", "6 Litre");
@@ -65,7 +65,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         {
             var json = "{\"custom_fields\":{\"pot-size-3\":\"6 Litre\",\"passport-2\":\"test\"}}";
 
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.Count.ShouldBe(2);
             result.CustomFields.ShouldContainKeyAndValue("pot-size-3", "6 Litre");
@@ -76,7 +76,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit
         public void Deserializes_array_custom_fields_with_two_items()
         {
             var json = "{\"custom_fields\":[{\"pot-size-3\":\"6 Litre\"},{\"passport-2\":\"test\"}]}";
-            var result = JsonConvert.DeserializeObject<DTO.Inventory>(json);
+            var result = JsonConvert.DeserializeObject<DTO.Response.Inventory>(json);
 
             result.CustomFields.Count.ShouldBe(2);
             result.CustomFields.ShouldContainKeyAndValue("pot-size-3", "6 Litre");
