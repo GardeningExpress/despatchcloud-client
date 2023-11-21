@@ -44,6 +44,22 @@ namespace GardeningExpress.DespatchCloudClient
         public async Task<HttpResponseMessage> GetAsync(string requestUri, CancellationToken cancellationToken)
             => await _httpClient.GetAsync(requestUri, cancellationToken);
 
+        public async Task<ApiResponse<OrderData>> CreateOrderAsync(OrderCreateRequest orderCreateRequest, CancellationToken cancellationToken = default)
+        {
+            var httpContent = SerializeObjectToHttpContent(orderCreateRequest);
+
+            var response = await _httpClient
+                .PostAsync($"orders/create", httpContent, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var deserializeResponse = await DeserializeResponse<OrderData>(response);
+                return new ApiResponse<OrderData>(deserializeResponse);
+            }
+
+            return await CreateErrorApiResponse<OrderData>(response);
+        }
+
         public async Task<ListResponse<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(orderSearchFilters.Search))
