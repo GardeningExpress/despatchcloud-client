@@ -34,15 +34,6 @@ namespace GardeningExpress.DespatchCloudClient
                 client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.Timeout = TimeSpan.FromSeconds(30);
-            }).ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                // Allowing Untrusted SSL Certificates
-                var handler = new HttpClientHandler();
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                handler.ServerCertificateCustomValidationCallback =
-                    (httpRequestMessage, cert, cetChain, policyErrors) => true;
-
-                return handler;
             });
 
             services.AddHttpClient<IDespatchCloudHttpClient, DespatchCloudHttpClient>((serviceProvider, client) =>
@@ -51,15 +42,6 @@ namespace GardeningExpress.DespatchCloudClient
                 client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
                 client.Timeout = TimeSpan.FromSeconds(30);
-            }).ConfigurePrimaryHttpMessageHandler(() =>
-            {
-                // Allowing Untrusted SSL Certificates
-                var handler = new HttpClientHandler();
-                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
-                handler.ServerCertificateCustomValidationCallback =
-                    (httpRequestMessage, cert, cetChain, policyErrors) => true;
-
-                return handler;
             }).AddHttpMessageHandler<AddAuthTokenHandler>();
         }
     }
