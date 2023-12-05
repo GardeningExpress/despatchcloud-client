@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO.Filter;
 using GardeningExpress.DespatchCloudClient.DTO.Request;
 using GardeningExpress.DespatchCloudClient.DTO.Response;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient
@@ -17,7 +18,9 @@ namespace GardeningExpress.DespatchCloudClient
 
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        public DespatchCloudHttpClient(HttpClient httpClient)
+        public DespatchCloudHttpClient(
+            HttpClient httpClient
+        )
         {
             _httpClient = httpClient;
 
