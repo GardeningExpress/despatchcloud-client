@@ -28,6 +28,24 @@ namespace GardeningExpress.DespatchCloudClient
             };
         }
 
+        public async Task<ApiResponse> CancelOrderAsync(int despatchCloudOrderId, CancellationToken cancellationToken = default)
+        {
+            var response = await _httpClient
+                .PostAsync($"order/{despatchCloudOrderId}/cancel", null, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return new ApiResponse();
+            }
+
+            return await CreateErrorApiResponse(response);
+        }
+
+        public Task<ApiResponse> CancelOrderAsync(string despatchCloudOrderId, CancellationToken cancellationToken = default)
+        {
+            throw new NotImplementedException();
+        }
+
         [Obsolete]
         public async Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken)
         {
@@ -131,11 +149,17 @@ namespace GardeningExpress.DespatchCloudClient
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
 
-            var errorMessage = errorResponse != null 
-                ? errorResponse.Error 
+            var errorMessage = errorResponse != null
+                ? errorResponse.Error
                 : $"Response from DespatchCloud: {response.StatusCode}";
-            
+
             return CreateErrorListResponse<T>(errorMessage);
+        }
+
+        private async Task<ApiResponse> CreateErrorApiResponse(HttpResponseMessage response)
+        {
+            var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
+            return CreateErrorApiResponse(errorResponse.Error);
         }
 
         private async Task<ApiResponse<T>> CreateErrorApiResponse<T>(HttpResponseMessage response)
@@ -143,6 +167,9 @@ namespace GardeningExpress.DespatchCloudClient
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
             return CreateErrorApiResponse<T>(errorResponse.Error);
         }
+
+        private static ApiResponse CreateErrorApiResponse(string errorMessage)
+            => new ApiResponse(errorMessage);
 
         private static ApiResponse<T> CreateErrorApiResponse<T>(string errorMessage)
             => new ApiResponse<T>(errorMessage);

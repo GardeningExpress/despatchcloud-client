@@ -20,6 +20,14 @@ namespace GardeningExpress.DespatchCloudClient
 
         Task<ApiResponse<Inventory>> UpdateInventoryAsync(string inventoryId, InventoryUpdateRequest inventoryUpdateRequest, CancellationToken cancellationToken = default);
 
+        /// <summary>
+        /// Cancels order by DC order id. You will need to get the DC order ID first.
+        /// </summary>
+        /// <param name="despatchCloudOrderId">The DC order id</param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<ApiResponse> CancelOrderAsync(int despatchCloudOrderId, CancellationToken cancellationToken = default);
+        
         [Obsolete]
         Task<HttpResponseMessage> PostAsJsonAsync<T>(string requestUri, T value, CancellationToken cancellationToken);
 
