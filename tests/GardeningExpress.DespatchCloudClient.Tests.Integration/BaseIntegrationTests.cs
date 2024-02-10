@@ -14,7 +14,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
     public abstract class BaseIntegrationTests
     {
-        protected string ApiBaseUrl = "https://gardeningexpresssb.despatchcloud.co.uk/public-api";
+        private const string ApiBaseUrl = "https://gardeningexpresssb.despatchcloud.co.uk/public-api";
+        
         protected string LoginPassword = "";
         protected string LoginEmailAddress = "";
 
@@ -60,7 +61,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 
         protected abstract Task MethodForAuthTest();
 
-        protected void CreateHttpClient()
+        private void CreateHttpClient()
         {
             var userSecretsConfig = new ConfigurationBuilder()
                 .AddUserSecrets<SearchInventoryAsyncTests>()

@@ -1,16 +1,15 @@
-using GardeningExpress.DespatchCloudClient.DTO;
 using GardeningExpress.DespatchCloudClient.DTO.Response;
 
 namespace GardeningExpress.DespatchCloudClient
 {
-    public abstract class ApiResponse
+    public class ApiResponse
     {
-        protected ApiResponse()
+        public ApiResponse()
         {
             IsSuccess = true;
         }
 
-        protected ApiResponse(string errorMessage)
+        public ApiResponse(string errorMessage)
         {
             Error = errorMessage;
             IsSuccess = false;
