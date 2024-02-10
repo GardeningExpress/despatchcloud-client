@@ -41,6 +41,30 @@ namespace GardeningExpress.DespatchCloudClient
             return await CreateErrorApiResponse(response);
         }
 
+        public async Task<ApiResponse> SetOrderStatusAsync(int despatchCloudOrderId, int statusId, CancellationToken cancellationToken = default)
+        {
+            var update = new
+            {
+                status_id = statusId
+            };
+
+            var content = new StringContent(
+                JsonConvert.SerializeObject(update),
+                Encoding.UTF8,
+                "application/json"
+            );
+
+            var response = await _httpClient
+                .PostAsync($"order/{despatchCloudOrderId}/update", content, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                return new ApiResponse();
+            }
+
+            return await CreateErrorApiResponse(response);
+        }
+
         public Task<ApiResponse> CancelOrderAsync(string despatchCloudOrderId, CancellationToken cancellationToken = default)
         {
             throw new NotImplementedException();

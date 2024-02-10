@@ -6,16 +6,16 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
     public class CancelOrderAsyncTests : BaseIntegrationTests
     {
-        private const string ChannelOrderId  = "601220153";
+        private const string ChannelOrderId = "601220151";
         private const string AlreadyDespatchedChannelOrderId = "600951054";
-        
+
         protected override Task MethodForAuthTest()
         {
             // this should return a 404, but not a 401, so test should pass
             return DespatchCloudHttpClient
                 .CancelOrderAsync(1);
         }
-        
+
         [Test]
         public async Task When_order_already_despatched_returns_error_message()
         {
@@ -69,7 +69,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             {
                 Assert.Fail("Could not get order after cancellation - {orderDetails.Error}");
             }
-            
+
             orderAfterCancellationDetails.Data.StatusId.ShouldBe(Constants.OrderStatus.Cancelled);
         }
     }
