@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.DTO.Filter;
 using GardeningExpress.DespatchCloudClient.DTO.Request;
 using GardeningExpress.DespatchCloudClient.DTO.Response;
+using GardeningExpress.DespatchCloudClient.Helpers;
 using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient
@@ -100,6 +101,14 @@ namespace GardeningExpress.DespatchCloudClient
             }
 
             return await CreateErrorApiResponse<OrderData>(response);
+        }
+
+        public async Task<ApiResponse<OrderData>> CreateThirdPartyOrderAsync(ThirdPartyOrderCreateRequest orderCreateRequest, CancellationToken cancellationToken = default)
+        {
+            // Map to Create Order request
+            var request = ThirdPartyOrderHelper.ConvertThirdPartyOrderToOrderRequest(orderCreateRequest);
+
+            return await CreateOrderAsync(request);
         }
 
         public async Task<ListResponse<OrderData>> SearchOrdersAsync(OrderSearchFilters orderSearchFilters, CancellationToken cancellationToken = default)
