@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using GardeningExpress.DespatchCloudClient.DTO.Request;
+using GardeningExpress.DespatchCloudClient.Model.GoGroopie;
 using Moq;
 using Moq.Contrib.HttpClient;
 using Moq.Protected;
@@ -14,7 +14,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 {
     public class CreateOrderAsyncTests
     {
-        private readonly string thirdPartyOrderJson = "{ \"platform\": \"GoGroopie.com\", \"deal_id\": \"11111\", \"product\": \"Test deal 4 Colours\", \"voucher_code\": \"1112223334\", \"redeem_date\": \"19-10-2019\", \"order_id\": \"1111111111\", \"price_options\": \"Coffee\", \"price\": \"10.99\", \"currency\": \"GBP\", \"full_name\": \"John Doe\", \"email\": \"john.doe@domain.com\", \"phone\": \"+333331111111\", \"house\": \"11\", \"street\": \"test street\", \"city\": \"London\", \"postcode\": \"SE15LB\", \"country_code\": \"GB\", \"sku\": \"01-0111\", \"pipe_deal_id\": \"11055\", \"postage_price\": \"2.99\", \"net_merchant_return\": \"5.99\"  }";
+        private readonly string goGroopieProductJson = "{ \"platform\": \"GoGroopie.com\", \"deal_id\": \"11111\", \"product\": \"Test deal 4 Colours\", \"voucher_code\": \"1112223334\", \"redeem_date\": \"19-10-2019\", \"order_id\": \"1111111111\", \"price_options\": \"Coffee\", \"price\": \"10.99\", \"currency\": \"GBP\", \"full_name\": \"John Doe\", \"email\": \"john.doe@domain.com\", \"phone\": \"+333331111111\", \"house\": \"11\", \"street\": \"test street\", \"city\": \"London\", \"postcode\": \"SE15LB\", \"country_code\": \"GB\", \"sku\": \"01-0111\", \"pipe_deal_id\": \"11055\", \"postage_price\": \"2.99\", \"net_merchant_return\": \"5.99\"  }";
 
         private readonly DespatchCloudConfig _despatchCloudConfig = new DespatchCloudConfig
         {
@@ -37,12 +37,13 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
         }
 
         [Test]
-        public async Task CreateThirdPartyOrderAsync_ShouldCallDespatchCloudCreateOrder_WithConvertedData()
+        public async Task CreateOrderAsync_ShouldCallDespatchCloudCreateOrder_WithConvertedData()
         {
             // ARRANGE
             var uriString = $"{_despatchCloudConfig.ApiBaseUrl}orders/create";
             var uri = new Uri(uriString);
-            var order = JsonConvert.DeserializeObject<ThirdPartyOrderCreateRequest>(thirdPartyOrderJson);
+            var product = JsonConvert.DeserializeObject<Product>(goGroopieProductJson);
+            var order = Helpers.ThirdPartyOrderHelper.ConvertGoGroopieProductToOrderRequest(product);
 
             _handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync",
                 ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == uri && r.Method == HttpMethod.Post),
@@ -54,7 +55,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 .Verifiable();
 
             // ACT
-            var result = await _despatchCloudHttpClient.CreateThirdPartyOrderAsync(order);
+            var result = await _despatchCloudHttpClient.CreateOrderAsync(order);
 
             // ASSERT
             // Make sure the create order endpoint on despatch cloud hit

@@ -1,8 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace GardeningExpress.DespatchCloudClient.DTO.Request
+namespace GardeningExpress.DespatchCloudClient.Model.GoGroopie
 {
-    public class ThirdPartyOrderCreateRequest
+    public class Product
     {
         [JsonProperty("platform")]
         public string Platform { get; set; }
@@ -11,7 +11,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO.Request
         public string DealId { get; set; }
 
         [JsonProperty("product")]
-        public string Product { get; set; }
+        public string ProductName { get; set; }
 
         [JsonProperty("voucher_code")]
         public string VoucherCode { get; set; }
