@@ -17,6 +17,8 @@ namespace GardeningExpress.DespatchCloudClient
 
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
+        #region Public methods
+
         public DespatchCloudHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -185,6 +187,28 @@ namespace GardeningExpress.DespatchCloudClient
             return await CreateErrorApiResponse<Inventory>(response);
         }
 
+
+        public async Task<ApiResponse<OrderInventoryAddData>> AddInventoryToOrderAsync(string orderId, OrderInventoryAddRequest orderInventoryAddRequest, CancellationToken cancellationToken = default)
+        {
+            var httpContent = SerializeObjectToHttpContent(orderInventoryAddRequest);
+
+            var response = await _httpClient
+                .PostAsync($"order/{orderId}/add_inventory", httpContent, cancellationToken);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var deserializeResponse = await DeserializeResponse<OrderInventoryAddData>(response);
+                return new ApiResponse<OrderInventoryAddData>(deserializeResponse);
+            }
+
+            return await CreateErrorApiResponse<OrderInventoryAddData>(response);
+        }
+
+        #endregion
+
+
+        #region Private methods
+
         private async Task<ListResponse<T>> CreateErrorListResponse<T>(HttpResponseMessage response)
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
@@ -225,5 +249,8 @@ namespace GardeningExpress.DespatchCloudClient
             var json = JsonConvert.SerializeObject(obj, _jsonSerializerSettings);
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
+
+        #endregion
+
     }
 }
