@@ -194,14 +194,23 @@ namespace GardeningExpress.DespatchCloudClient
 
             var response = await _httpClient
                 .PostAsync($"order/{despatchCloudOrderId}/add_inventory", httpContent, cancellationToken);
+            
+            // If there were a differing payload on status code response this would just have null fields
+            OrderInventoryAddData deserializeResponse = await DeserializeResponse<OrderInventoryAddData>(response);
 
             if (response.IsSuccessStatusCode)
             {
-                var deserializeResponse = await DeserializeResponse<OrderInventoryAddData>(response);
                 return new ApiResponse<OrderInventoryAddData>(deserializeResponse);
             }
-
-            return await CreateErrorApiResponse<OrderInventoryAddData>(response);
+            else if (deserializeResponse.ValidationError != null)
+            {
+                var valiationErrors = String.Join(". ", deserializeResponse.ValidationError);
+                return CreateErrorApiResponse<OrderInventoryAddData>(valiationErrors);
+            }
+            else
+            {
+                return await CreateErrorApiResponse<OrderInventoryAddData>(response);
+            }
         }
 
         #endregion

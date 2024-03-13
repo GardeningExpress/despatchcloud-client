@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 
 namespace GardeningExpress.DespatchCloudClient.DTO.Request
@@ -7,7 +6,7 @@ namespace GardeningExpress.DespatchCloudClient.DTO.Request
     public class OrderInventoryAddRequest
     {
         [JsonProperty("items")]
-        public List<OrderInventoryItem> Items { get; set; } = new List<OrderInventoryItem>();
+        public IList<OrderInventoryItem> Items { get; set; } = new List<OrderInventoryItem>();
     }
 
     public class OrderInventoryItem

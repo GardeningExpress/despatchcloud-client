@@ -3,7 +3,6 @@ using GardeningExpress.DespatchCloudClient.Model.GoGroopie;
 using GardeningExpress.DespatchCloudClient.Tests.Integration.Utils;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace GardeningExpress.DespatchCloudClient.Tests.Integration
@@ -22,6 +21,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
         public void Setup()
         {
             newOrder = TestUtils.GetCreateOrderRequest();
+            newOrder.InvoiceName = "Integration Tests: CreateOrderAsync()";
         }
                 
         [Test]
@@ -59,6 +59,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             // ARRANGE
             var product = JsonConvert.DeserializeObject<Product>(goGroopieProductJson);
             var order = Helpers.ThirdPartyOrderHelper.ConvertGoGroopieProductToOrderRequest(product);
+            order.InvoiceName = "Integration Tests: CreateOrderAsync()";
 
             // ACT
             var result = await DespatchCloudHttpClient.CreateOrderAsync(order);

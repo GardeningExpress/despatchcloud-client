@@ -1,5 +1,4 @@
 ﻿using GardeningExpress.DespatchCloudClient.DTO.Request;
-using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
@@ -19,7 +18,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
                     Name = "MACBOOKAIR",
                     SKU = "MACBOOKAIR",
                     Quantity = 1,
-                    UnitPrice = 10,
+                    UnitPrice = 1000.22M,
                     LineTotalDiscount = 2,
                     Options = "Colour: Pink",
                     Notes = "TEst 1",
@@ -29,7 +28,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
                 }
             }
         };
-
 
         public static OrderCreateRequest GetCreateOrderRequest() => new OrderCreateRequest
         {
@@ -55,7 +53,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
             ShippingAddressCountry = "Turkey",
             ShippingAddressPostcode = "35090",
             ShippingAddressIso = "TR",
-            InvoiceName = "Invoice Name 1",
+            InvoiceName = "Integration Tests:",
             InvoiceAddressLineOne = "IAL 1",
             InvoiceAddressLineTwo = "IAL 2",
             InvoiceAddressCity = "Bursa",
