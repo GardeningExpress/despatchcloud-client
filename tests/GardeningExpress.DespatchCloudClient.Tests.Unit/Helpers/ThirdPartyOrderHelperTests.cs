@@ -2,11 +2,9 @@
 using GardeningExpress.DespatchCloudClient.Model.GoGroopie;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using System;
-using System.Linq;
 using static GardeningExpress.DespatchCloudClient.Constants;
 
-namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Services
+namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Helpers
 {
     public class ThirdPartyOrderServiceTests
     {

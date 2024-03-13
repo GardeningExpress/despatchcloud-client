@@ -188,12 +188,12 @@ namespace GardeningExpress.DespatchCloudClient
         }
 
 
-        public async Task<ApiResponse<OrderInventoryAddData>> AddInventoryToOrderAsync(string orderId, OrderInventoryAddRequest orderInventoryAddRequest, CancellationToken cancellationToken = default)
+        public async Task<ApiResponse<OrderInventoryAddData>> AddInventoryToOrderAsync(string despatchCloudOrderId, OrderInventoryAddRequest orderInventoryAddRequest, CancellationToken cancellationToken = default)
         {
             var httpContent = SerializeObjectToHttpContent(orderInventoryAddRequest);
 
             var response = await _httpClient
-                .PostAsync($"order/{orderId}/add_inventory", httpContent, cancellationToken);
+                .PostAsync($"order/{despatchCloudOrderId}/add_inventory", httpContent, cancellationToken);
 
             if (response.IsSuccessStatusCode)
             {

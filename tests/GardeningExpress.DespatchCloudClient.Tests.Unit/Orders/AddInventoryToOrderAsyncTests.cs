@@ -40,7 +40,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
         }
 
         [Test]
-        public async Task AddInventoryToOrderAsync_ShouldSeriliseData_ToStructureRequiedByDespatchCloud()
+        public async Task AddInventoryToOrderAsync_ShouldDeseriliseData_ToStructureRequiedByDespatchCloud()
         {
             // ARRANGE
 
@@ -62,7 +62,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             Assert.AreEqual("Japan", item.CountryOfOrigin);
             Assert.AreEqual("https://media-exp1.licdn.com/dms/image/C4D0BAQFenp-2o4YZpA/company-logo_200_200/0/1594636780827?e=2147483647&v=beta&t=_UDcVrneIwMgxwvV3x8pEJifJSxkTW52B0bbln2Q86I", item.ImageUrl);
         }
-
 
 
         [Test]
