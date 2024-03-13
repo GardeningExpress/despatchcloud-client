@@ -17,8 +17,6 @@ namespace GardeningExpress.DespatchCloudClient
 
         private readonly JsonSerializerSettings _jsonSerializerSettings;
 
-        #region Public methods
-
         public DespatchCloudHttpClient(HttpClient httpClient)
         {
             _httpClient = httpClient;
@@ -187,16 +185,15 @@ namespace GardeningExpress.DespatchCloudClient
             return await CreateErrorApiResponse<Inventory>(response);
         }
 
-
         public async Task<ApiResponse<OrderInventoryAddData>> AddInventoryToOrderAsync(string despatchCloudOrderId, OrderInventoryAddRequest orderInventoryAddRequest, CancellationToken cancellationToken = default)
         {
             var httpContent = SerializeObjectToHttpContent(orderInventoryAddRequest);
 
             var response = await _httpClient
                 .PostAsync($"order/{despatchCloudOrderId}/add_inventory", httpContent, cancellationToken);
-            
+
             // If there were a differing payload on status code response this would just have null fields
-            OrderInventoryAddData deserializeResponse = await DeserializeResponse<OrderInventoryAddData>(response);
+            var deserializeResponse = await DeserializeResponse<OrderInventoryAddData>(response);
 
             if (response.IsSuccessStatusCode)
             {
@@ -212,11 +209,6 @@ namespace GardeningExpress.DespatchCloudClient
                 return await CreateErrorApiResponse<OrderInventoryAddData>(response);
             }
         }
-
-        #endregion
-
-
-        #region Private methods
 
         private async Task<ListResponse<T>> CreateErrorListResponse<T>(HttpResponseMessage response)
         {
@@ -258,8 +250,5 @@ namespace GardeningExpress.DespatchCloudClient
             var json = JsonConvert.SerializeObject(obj, _jsonSerializerSettings);
             return new StringContent(json, Encoding.UTF8, "application/json");
         }
-
-        #endregion
-
     }
 }

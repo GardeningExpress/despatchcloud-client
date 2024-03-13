@@ -7,12 +7,11 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
 {
     public class TestUtils
     {
-        #region TestData
-
         public static OrderInventoryAddRequest GetOrderInventoryAddRequest() => new OrderInventoryAddRequest
         {
-            Items = new List<OrderInventoryItem> {
-                new OrderInventoryItem
+            Items = new List<OrderInventoryItem>
+            {
+                new()
                 {
                     InventoryId = "3333",
                     Name = "MACBOOKAIR",
@@ -62,18 +61,18 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
             InvoiceAddressPostcode = "16300",
             InvoiceAddressIso = "TR",
             CustomerComments = "Test 1 Comment",
-            Notes = new List<string> {
-                    "Test 1 Note"
-                },
-            CustomFields = new Dictionary<string, string>() {
-                    { "test1-1","Test Data" }
-                },
+            Notes = new List<string>
+            {
+                "Test 1 Note"
+            },
+            CustomFields = new Dictionary<string, string>()
+            {
+                { "test1-1", "Test Data" }
+            },
             FulfilmentClientId = null,
             ShippingPaid = "2.00",
             ManualChannelId = 1
         };
-        
-        #endregion
 
         public static void SetPropertyValue(object obj, string propertyName, object value)
         {
@@ -102,6 +101,5 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
             // Set the property value
             propertyInfo.SetValue(obj, value);
         }
-
     }
 }
