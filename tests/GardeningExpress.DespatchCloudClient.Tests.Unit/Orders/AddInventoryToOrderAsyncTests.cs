@@ -40,7 +40,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
         }
 
         [Test]
-        public async Task AddInventoryToOrderAsync_ShouldDeseriliseData_ToStructureRequiedByDespatchCloud()
+        public void AddInventoryToOrderAsync_ShouldDeseriliseData_ToStructureRequiedByDespatchCloud()
         {
             // ARRANGE
 

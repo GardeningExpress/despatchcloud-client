@@ -11,22 +11,22 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             DespatchCloudHttpClient
                 .CreateOrderAsync(new OrderCreateRequest());
 
-        private OrderCreateRequest newOrder;
+        private OrderCreateRequest _newOrder;
 
         [SetUp]
         public void Setup()
         {
-            newOrder = TestUtils.GetCreateOrderRequest();
-            newOrder.InvoiceName = "Integration Tests: CreateOrderAsync()";
+            _newOrder = TestUtils.GetCreateOrderRequest();
+            _newOrder.InvoiceName = "Integration Tests: CreateOrderAsync()";
         }
-                
+
         [Test]
         public async Task CreateOrderAsync_ShouldReturnIsSuccessAsTrueAndIdField_WhenSuccessful()
         {
             // ARRANGE
 
             // ACT
-            var result = await DespatchCloudHttpClient.CreateOrderAsync(newOrder);
+            var result = await DespatchCloudHttpClient.CreateOrderAsync(_newOrder);
 
             // ASSERT
             Assert.IsTrue(result.IsSuccess);
@@ -39,15 +39,29 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
         public async Task CreateOrderAsync_ShouldReturnIsSuccessAsFalseAndAnErrorMessage_WhenRequiredFieldMissing(string field, string jsonField, object setValue = null)
         {
             // ARRANGE
-            TestUtils.SetPropertyValue(newOrder, field, setValue);
+            TestUtils.SetPropertyValue(_newOrder, field, setValue);
 
             // ACT
-            var result = await DespatchCloudHttpClient.CreateOrderAsync(newOrder);
+            var result = await DespatchCloudHttpClient.CreateOrderAsync(_newOrder);
 
             // ASSERT
             Assert.IsFalse(result.IsSuccess);
             Assert.AreEqual(result.Error, $"Error executing statement: Column '{jsonField}' cannot be null");
         }
 
+        [Test]
+        public async Task CreateOrderAsync_CanSetChannelId()
+        {
+            // ARRANGE
+            _newOrder.ChannelOrderId = "test12345";
+
+            // ACT
+            var result = await DespatchCloudHttpClient.CreateOrderAsync(_newOrder);
+
+            // ASSERT
+            Assert.IsTrue(result.IsSuccess);
+
+            Assert.AreEqual(_newOrder.ChannelOrderId, result.Data.ChannelOrderId);
+        }
     }
 }
