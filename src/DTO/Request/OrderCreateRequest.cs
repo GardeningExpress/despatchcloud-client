@@ -131,5 +131,8 @@ namespace GardeningExpress.DespatchCloudClient.DTO.Request
 
         [JsonProperty("manual_channel_id")]
         public int ManualChannelId { get; set; }
+
+        [JsonProperty("channel_order_id")]
+        public string ChannelOrderId { get; set; }
     }
 }
