@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace GardeningExpress.DespatchCloudClient.DTO.Request
 {
-    public class OrderInventoryAddRequest
+    public record OrderInventoryAddRequest
     {
         [JsonProperty("items")]
         public IList<OrderInventoryItem> Items { get; set; } = new List<OrderInventoryItem>();
     }
 
-    public class OrderInventoryItem
+    public record OrderInventoryItem
     {
         [JsonProperty("inventory_id")]
         public string InventoryId { get; set; }

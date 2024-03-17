@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace GardeningExpress.DespatchCloudClient.DTO.Request
 {
-    public class OrderCreateRequest
+    public record OrderCreateRequest
     {
         [JsonProperty("status_id")]
         public int StatusId { get; set; }

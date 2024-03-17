@@ -61,7 +61,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration.Utils
             InvoiceAddressPostcode = "16300",
             InvoiceAddressIso = "TR",
             CustomerComments = "Test 1 Comment",
-            ChannelOrderId = "test123", 
+            ChannelOrderId = $"TestSetId-{DateTime.Now.Ticks}",
             Notes = new List<string>
             {
                 "Test 1 Note"

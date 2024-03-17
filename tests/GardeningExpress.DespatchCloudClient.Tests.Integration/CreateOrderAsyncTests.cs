@@ -1,7 +1,9 @@
-﻿using GardeningExpress.DespatchCloudClient.DTO.Request;
+﻿using System;
+using GardeningExpress.DespatchCloudClient.DTO.Request;
 using GardeningExpress.DespatchCloudClient.Tests.Integration.Utils;
 using NUnit.Framework;
 using System.Threading.Tasks;
+using Shouldly;
 
 namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
@@ -53,7 +55,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
         public async Task CreateOrderAsync_CanSetChannelId()
         {
             // ARRANGE
-            _newOrder.ChannelOrderId = "test12345";
+            _newOrder.ChannelOrderId = $"TestSetId-{DateTime.Now.Ticks}";
 
             // ACT
             var result = await DespatchCloudHttpClient.CreateOrderAsync(_newOrder);
@@ -62,6 +64,24 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             Assert.IsTrue(result.IsSuccess);
 
             Assert.AreEqual(_newOrder.ChannelOrderId, result.Data.ChannelOrderId);
+        }
+
+        [Test]
+        public async Task CreateOrderAsync_DuplicateOrder()
+        {
+            // ACT
+            var channelOrderId = $"Test-{DateTime.Now.Ticks}";
+
+            var order = _newOrder with { ChannelOrderId = channelOrderId };
+
+            var result1 = await DespatchCloudHttpClient.CreateOrderAsync(order);
+            var result2 = await DespatchCloudHttpClient.CreateOrderAsync(order);
+
+            // ASSERT
+            Assert.IsTrue(result1.IsSuccess);
+            Assert.IsFalse(result2.IsSuccess);
+
+            result2.Error.ShouldBe($"The Channel Order ID ({channelOrderId}) is already in use.");
         }
     }
 }
