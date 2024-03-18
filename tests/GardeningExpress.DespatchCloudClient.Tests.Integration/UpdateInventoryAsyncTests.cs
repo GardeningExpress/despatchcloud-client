@@ -83,7 +83,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             {
                 CustomFields = new Dictionary<string, object>
                 {
-                    { "pot-size-3", "100 Litre" }
+                    { "pot-size-4", "100 Litre" }
                 }
             };
 
@@ -91,16 +91,16 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
                 .UpdateInventoryAsync(_originalInventory.Id, request);
 
             updatedInventoryResult.IsSuccess.ShouldBeTrue();
-            updatedInventoryResult.Data.CustomFields["pot-size-3"].ShouldBe("100 Litre");
+            updatedInventoryResult.Data.CustomFields["pot-size-4"].ShouldBe("100 Litre");
 
             var inventoryAfterUpdate = await DespatchCloudHttpClient
                 .GetInventoryBySKUAsync("DEAL16071");
 
-            inventoryAfterUpdate.Data.CustomFields["pot-size-3"].ShouldBe("100 Litre");
+            inventoryAfterUpdate.Data.CustomFields["pot-size-4"].ShouldBe("100 Litre");
         }
         
         [Test]
-        public async Task Does_Not_Add_CustomField_If_Not_Found()
+        public async Task DoesNotAddCustomField_IfNotFound_AndReturnsError()
         {
             var request = new InventoryUpdateRequest
             {
@@ -113,9 +113,8 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             var updatedInventoryResult = await DespatchCloudHttpClient
                 .UpdateInventoryAsync(_originalInventory.Id, request);
 
-            updatedInventoryResult.IsSuccess.ShouldBeTrue();
-            updatedInventoryResult.Data.CustomFields.Count.ShouldBe(_originalInventory.CustomFields.Count);
-            updatedInventoryResult.Data.CustomFields.ShouldNotContainKey("new_field");
+            updatedInventoryResult.IsSuccess.ShouldBeFalse();
+            updatedInventoryResult.Error.ShouldBe("Custom field new_field not found on the system");
         }
     }
 }

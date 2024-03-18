@@ -32,7 +32,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
             result.Data.ShouldNotBeNull();
             result.Data.Name.ShouldNotBeNullOrEmpty();
             result.Data.Name.ShouldStartWith("Prunus triloba");
-            result.Data.CustomFields.ShouldContainKeyAndValue("pot-size-3", "2-3 Litre");
+            result.Data.CustomFields.ShouldContainKeyAndValue("pot-size-1", "2-3 Litre");
         }
         
         [Test]
