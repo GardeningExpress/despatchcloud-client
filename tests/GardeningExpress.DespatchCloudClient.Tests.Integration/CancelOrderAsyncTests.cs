@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
+using GardeningExpress.DespatchCloudClient.Tests.Integration.Utils;
 using NUnit.Framework;
 using Shouldly;
 
@@ -7,7 +9,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
     public class CancelOrderAsyncTests : BaseIntegrationTests
     {
         private const string ChannelOrderId = "601220151";
-        private const string AlreadyDespatchedChannelOrderId = "600951054";
+            private const string AlreadyDespatchedChannelOrderId = "610951054";
 
         protected override Task MethodForAuthTest()
         {
@@ -43,7 +45,10 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
         [Test]
         public async Task Cancels_order()
         {
-            var orderDetails = await DespatchCloudHttpClient.GetOrderByChannelOrderIdAsync(ChannelOrderId);
+            var orderReq = TestUtils.GetCreateOrderRequest();
+            orderReq.ChannelOrderId = $"TestSetId-{DateTime.Now.Ticks}";
+
+            var orderDetails = await DespatchCloudHttpClient.CreateOrderAsync(orderReq);
 
             if (!orderDetails.IsSuccess)
             {
