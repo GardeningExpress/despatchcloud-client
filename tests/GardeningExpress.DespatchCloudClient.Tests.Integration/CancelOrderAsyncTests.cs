@@ -9,7 +9,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
     public class CancelOrderAsyncTests : BaseIntegrationTests
     {
         private const string ChannelOrderId = "601220151";
-            private const string AlreadyDespatchedChannelOrderId = "610951054";
+            private const string AlreadyDespatchedChannelOrderId = "gogroopie-test-638464556449172005";
 
         protected override Task MethodForAuthTest()
         {

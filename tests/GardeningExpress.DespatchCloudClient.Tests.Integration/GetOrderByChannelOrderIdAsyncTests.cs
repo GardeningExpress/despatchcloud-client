@@ -6,7 +6,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 {
     public class GetOrderByChannelOrderIdAsyncTests : BaseIntegrationTests
     {
-        private const string ChannelOrderId = "600951054";
+        private const string ChannelOrderId = "601220151";
         
         protected override Task MethodForAuthTest()
         {
