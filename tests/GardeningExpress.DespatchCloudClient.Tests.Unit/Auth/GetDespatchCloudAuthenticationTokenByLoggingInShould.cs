@@ -1,12 +1,16 @@
 using System;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using GardeningExpress.DespatchCloudClient.Auth;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using Moq.Contrib.HttpClient;
+using Moq.Protected;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Shouldly;
@@ -20,6 +24,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
 
         private GetDespatchCloudAuthenticationTokenByLoggingIn _getDespatchCloudAuthenticationTokenByLoggingIn;
         private Mock<HttpMessageHandler> _handler;
+        private Mock<IMemoryCache> _mockMemoryCache;
 
         [SetUp]
         public void SetUp()
@@ -41,11 +46,12 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
                 .Returns(_despatchCloudConfig);
 
             var mockLogger = new Mock<ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn>>();
-
+            
+            _mockMemoryCache = new Mock<IMemoryCache>();
             _getDespatchCloudAuthenticationTokenByLoggingIn = new GetDespatchCloudAuthenticationTokenByLoggingIn(
-                httpClient,
-                mockOptions.Object, mockLogger.Object
+                httpClient, mockOptions.Object, mockLogger.Object, _mockMemoryCache.Object
             );
+
         }
 
         [TestCase("email@domain.com", "")]
@@ -100,6 +106,38 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             var token = await _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync();
 
             token.ShouldBe("this.a.token");
+        }
+
+        [Test]
+        public async Task GetTokenAsync_ShouldNotCallLoginEndpointIfCachedTokenExissts()
+        {
+            var cachedToken = "cached.token";
+            var tokenResponse = new
+            {
+                token = "this.a.token"
+            };
+            var uriString = $"{_despatchCloudConfig.ApiBaseUrl}login";
+            var uri = new Uri(uriString);
+            var expectedValue = cachedToken as Object;
+            _mockMemoryCache.Setup(r => r.TryGetValue(It.IsAny<Object>(), out expectedValue)).Returns(true);
+
+            _handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == uri && r.Method == HttpMethod.Post),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(tokenResponse), Encoding.UTF8)
+                })
+                .Verifiable();
+
+            // ACT
+            var token = await _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync();
+
+            // ASSERT
+            _handler.Protected().Verify("SendAsync", Times.Never(),
+               ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == new Uri(uriString) && r.Method == HttpMethod.Post),
+               ItExpr.IsAny<CancellationToken>());
+            token.ShouldBe(cachedToken);
         }
     }
 }
