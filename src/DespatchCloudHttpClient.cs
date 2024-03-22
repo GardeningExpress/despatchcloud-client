@@ -252,7 +252,7 @@ namespace GardeningExpress.DespatchCloudClient
         private string GetErrorMessageFromResponseMessage(DespatchCloudErrorResponse despatchCloudErrorResponse, HttpResponseMessage httpResponse)
         {
             return (despatchCloudErrorResponse == null || despatchCloudErrorResponse.Error == null)
-                ? $"Response from DespatchCloud: {(int)httpResponse.StatusCode} - {httpResponse.ReasonPhrase ?? ""}"
+                ? $"Response from DespatchCloud: {(int)httpResponse.StatusCode} - {httpResponse.ReasonPhrase ?? "<reasonphrase not defined>"}"
                 : despatchCloudErrorResponse.Error;
         }
     }
