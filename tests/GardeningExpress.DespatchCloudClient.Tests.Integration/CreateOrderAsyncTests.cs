@@ -83,5 +83,24 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 
             result2.Error.ShouldBe($"The Channel Order ID ({channelOrderId}) is already in use.");
         }
+
+        
+        [Test]
+        public async Task CreateOrderAsync_WithInvalidManualChannelId_ShouldReturnAHttp422ErrorMessage()
+        {
+            // 422 response occurs when manualchannelid is wrong
+            // ARRANGE
+            var channelOrderId = $"Test-{DateTime.Now.Ticks}";
+            var order = _newOrder with { ChannelOrderId = channelOrderId };
+            order.ManualChannelId = 1234;
+
+            // ACT
+            var result1 = await DespatchCloudHttpClient.CreateOrderAsync(order);
+
+            // ASSERT
+            Assert.IsFalse(result1.IsSuccess);
+            Assert.IsNotNull(result1.Error);
+            Assert.AreEqual("Response from DespatchCloud: 422 - Unprocessable Entity", result1.Error);
+        }
     }
 }

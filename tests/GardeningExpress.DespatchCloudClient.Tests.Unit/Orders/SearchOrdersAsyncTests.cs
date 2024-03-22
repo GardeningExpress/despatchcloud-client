@@ -16,7 +16,7 @@ using Shouldly;
 namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
 {
     [TestFixture]
-    public class DespatchCloudSearchOrdersTests
+    public class DespatchCloudSearchOrdersTests 
     {
         private readonly DespatchCloudConfig _despatchCloudConfig = new DespatchCloudConfig
         {
@@ -125,6 +125,31 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
             apiResponse.PagedData.CurrentPage.ShouldBe<int>(1);
             apiResponse.PagedData.Data[0].Email.ShouldBe(values.email);
             apiResponse.PagedData.Data[0].ChannelId.ShouldBe(3);
+        }
+
+        [Test]
+        public async Task SearchOrdersAsync_ShouldReturnIsSuccessFalse_AndErrorMessage_WhenNon200ResponseOccurs()
+        {
+            // ARRANGE
+            _handler.Protected()
+                .Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r => r.Method == HttpMethod.Get && r.RequestUri.ToString().StartsWith("https://fake.api/orders")),
+                ItExpr.IsAny<CancellationToken>())
+               .ReturnsAsync(new HttpResponseMessage(System.Net.HttpStatusCode.InternalServerError)
+                {
+                    ReasonPhrase = "Internal Server Error"
+                });
+
+            // ACT
+            var apiResponse = await _despatchCloudHttpClient.SearchOrdersAsync(
+                new OrderSearchFilters
+                {
+                    Search = "ASFSAFD"
+                });
+
+            // ASSERT
+            Assert.False(apiResponse.IsSuccess);            
+            Assert.AreEqual("Response from DespatchCloud: 500 - Internal Server Error", apiResponse.Error);
         }
     }
 }

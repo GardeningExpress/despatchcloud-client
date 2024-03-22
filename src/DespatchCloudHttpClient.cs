@@ -156,7 +156,7 @@ namespace GardeningExpress.DespatchCloudClient
         }
 
         public async Task<ApiResponse<Inventory>> GetInventoryBySKUAsync(string sku, CancellationToken cancellationToken = default)
-        {
+        {   
             var searchFilters = new InventorySearchFilters
             {
                 SKU = sku
@@ -213,24 +213,22 @@ namespace GardeningExpress.DespatchCloudClient
         private async Task<ListResponse<T>> CreateErrorListResponse<T>(HttpResponseMessage response)
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
-
-            var errorMessage = errorResponse != null
-                ? errorResponse.Error
-                : $"Response from DespatchCloud: {response.StatusCode}";
-
+            var errorMessage = GetErrorMessageFromResponseMessage(errorResponse, response);
             return CreateErrorListResponse<T>(errorMessage);
         }
 
         private async Task<ApiResponse> CreateErrorApiResponse(HttpResponseMessage response)
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
-            return CreateErrorApiResponse(errorResponse.Error);
+            var errorMessage = GetErrorMessageFromResponseMessage(errorResponse, response);
+            return CreateErrorApiResponse(errorMessage);
         }
 
         private async Task<ApiResponse<T>> CreateErrorApiResponse<T>(HttpResponseMessage response)
         {
             var errorResponse = await DeserializeResponse<DespatchCloudErrorResponse>(response);
-            return CreateErrorApiResponse<T>(errorResponse.Error);
+            var errorMessage = GetErrorMessageFromResponseMessage(errorResponse, response);
+            return CreateErrorApiResponse<T>(errorMessage);
         }
 
         private static ApiResponse CreateErrorApiResponse(string errorMessage)
@@ -249,6 +247,13 @@ namespace GardeningExpress.DespatchCloudClient
         {
             var json = JsonConvert.SerializeObject(obj, _jsonSerializerSettings);
             return new StringContent(json, Encoding.UTF8, "application/json");
+        }
+
+        private string GetErrorMessageFromResponseMessage(DespatchCloudErrorResponse despatchCloudErrorResponse, HttpResponseMessage httpResponse)
+        {
+            return (despatchCloudErrorResponse == null || despatchCloudErrorResponse.Error == null)
+                ? $"Response from DespatchCloud: {(int)httpResponse.StatusCode} - {httpResponse.ReasonPhrase ?? ""}"
+                : despatchCloudErrorResponse.Error;
         }
     }
 }
