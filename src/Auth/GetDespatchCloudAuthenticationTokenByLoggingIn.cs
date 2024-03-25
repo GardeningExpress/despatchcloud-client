@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
@@ -16,6 +17,8 @@ namespace GardeningExpress.DespatchCloudClient.Auth
         private readonly IOptionsMonitor<DespatchCloudConfig> _despatchCloudConfig;
         private readonly ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn> _logger;
         private readonly IMemoryCache _memoryCache;
+
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(1,1);
 
         MemoryCacheEntryOptions cacheEntryOptions = new()
         {
@@ -36,22 +39,25 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             _despatchCloudConfig = despatchCloudConfig;
             _logger = logger;
             _memoryCache = memoryCache;
-            _memoryCache.Set<Lazy<string>>(keyForCacheEntry, null);
+            //_memoryCache.Set<string>(keyForCacheEntry, null);
             _httpClient.BaseAddress = new Uri(_despatchCloudConfig.CurrentValue.ApiBaseUrl);
         }
 
         public async Task<string> GetTokenAsync()
         {
-            var item = _memoryCache.Get(keyForCacheEntry);
-            if (item != null) {
-                _logger.LogDebug("GetTokenAsync() returning cached token");
-                return item.ToString();
-            }
-
             HttpResponseMessage responseMessage;
 
+            // protect race conditions on memorycache if multiple threads triggered simulataneously
+            semaphore.Wait();
             try
             {
+                var item = _memoryCache.Get(keyForCacheEntry);
+                if (item != null) {
+                    _logger.LogDebug("GetTokenAsync() returning cached token");
+                    return item.ToString();
+                }
+
+
                 var loginRequest = new
                 {
                     email = _despatchCloudConfig.CurrentValue.LoginEmailAddress,
@@ -80,6 +86,10 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             catch (Exception ex)
             {
                 throw new ApiAuthenticationException(ex);
+            }
+            finally
+            {
+                semaphore.Release();
             }
 
             if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)

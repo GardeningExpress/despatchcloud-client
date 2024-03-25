@@ -48,6 +48,11 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             var mockLogger = new Mock<ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn>>();
             
             _mockMemoryCache = new Mock<IMemoryCache>();
+            // Set defaults (eg not cached)
+            var cacheResp = null as Object;
+            _mockMemoryCache.Setup(r => r.TryGetValue(It.IsAny<Object>(), out cacheResp)).Returns(true);
+            var mockCacheEntry = new Mock<ICacheEntry>();
+            _mockMemoryCache.Setup(r => r.CreateEntry(It.IsAny<Object>())).Returns(mockCacheEntry.Object);
             _getDespatchCloudAuthenticationTokenByLoggingIn = new GetDespatchCloudAuthenticationTokenByLoggingIn(
                 httpClient, mockOptions.Object, mockLogger.Object, _mockMemoryCache.Object
             );
@@ -92,7 +97,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
         }
 
         [Test]
-        public async Task Return_token_if_success()
+        public async Task CacheTokenInMemory_And_Return_token_if_success()
         {
             var tokenResponse = new
             {
@@ -104,7 +109,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
 
             // Act
             var token = await _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync();
-
+            _mockMemoryCache.Verify(r => r.CreateEntry("token"),Times.Once);
             token.ShouldBe("this.a.token");
         }
 
