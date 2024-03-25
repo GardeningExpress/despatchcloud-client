@@ -20,11 +20,7 @@ namespace GardeningExpress.DespatchCloudClient.Auth
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(1,1);
 
-        MemoryCacheEntryOptions cacheEntryOptions = new()
-        {
-            AbsoluteExpirationRelativeToNow =
-            TimeSpan.FromMilliseconds(60 * 1000 * 10)// 10 minute expiry
-        };
+        MemoryCacheEntryOptions cacheEntryOptions;
 
         private readonly string keyForCacheEntry = "token";
 
@@ -40,6 +36,12 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             _logger = logger;
             _memoryCache = memoryCache;
             _httpClient.BaseAddress = new Uri(_despatchCloudConfig.CurrentValue.ApiBaseUrl);
+            cacheEntryOptions = new()
+            {
+                // Defaults to 10 minute expiry if no config setting
+                AbsoluteExpirationRelativeToNow =
+                TimeSpan.FromMilliseconds(60 * 1000 * _despatchCloudConfig.CurrentValue.TokenCacheExpiryMinutes) 
+            };
         }
 
         public async Task<string> GetTokenAsync()
@@ -55,7 +57,6 @@ namespace GardeningExpress.DespatchCloudClient.Auth
                     _logger.LogDebug("GetTokenAsync() returning cached token");
                     return item.ToString();
                 }
-
 
                 var loginRequest = new
                 {

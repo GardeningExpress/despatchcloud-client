@@ -23,6 +23,8 @@ namespace GardeningExpress.DespatchCloudClient
         public string LoginPassword { get; set; }
 
         public DespatchCloudEnvironment Environment { get; set; }
+
+        public int TokenCacheExpiryMinutes { get; set; } = 10;
     }
 
     public enum DespatchCloudEnvironment
