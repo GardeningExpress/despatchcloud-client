@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -48,6 +49,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             var mockLogger = new Mock<ILogger<GetDespatchCloudAuthenticationTokenByLoggingIn>>();
             
             _mockMemoryCache = new Mock<IMemoryCache>();
+
             // Set defaults (eg not cached)
             var cacheResp = null as Object;
             _mockMemoryCache.Setup(r => r.TryGetValue(It.IsAny<Object>(), out cacheResp)).Returns(true);
@@ -121,7 +123,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
             {
                 token = "this.a.token"
             };
-            var uriString = $"{_despatchCloudConfig.ApiBaseUrl}login";
+            var uriString = $"{_despatchCloudConfig.ApiBaseUrl}auth/login";
             var uri = new Uri(uriString);
             var expectedValue = cachedToken as Object;
             _mockMemoryCache.Setup(r => r.TryGetValue(It.IsAny<Object>(), out expectedValue)).Returns(true);
@@ -143,6 +145,46 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Auth
                ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == new Uri(uriString) && r.Method == HttpMethod.Post),
                ItExpr.IsAny<CancellationToken>());
             token.ShouldBe(cachedToken);
+        }
+
+        private void ChangeOut(Mock<IMemoryCache> mock)
+        {
+            var cachedToken = "cached.token";
+            var secondValue = cachedToken as Object;
+            mock.Setup(n => n.TryGetValue(It.IsAny<Object>(), out secondValue)).Returns(true);
+        }
+
+        [Test]
+        public async Task GetTokenAsync_ShouldNotCallLoginEndpoint_WhenMultipleThreadsExecute_AndTokenExists()
+        {
+           
+            var firstValue = null as Object;
+            _mockMemoryCache.Setup(r => r.TryGetValue(It.IsAny<Object>(), out firstValue)).Callback(() => ChangeOut(_mockMemoryCache)).Returns(false);
+            var tokenResponse = new
+            {
+                token = "this.a.token"
+            };
+            var uriString = $"{_despatchCloudConfig.ApiBaseUrl}auth/login";
+            var uri = new Uri(uriString);
+
+            _handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == uri && r.Method == HttpMethod.Post),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(JsonConvert.SerializeObject(tokenResponse), Encoding.UTF8)
+                })
+                .Verifiable();
+
+            // ACT - Confirm semaphone is preventing race condition
+            var task1 = _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync();
+            var task2 = _getDespatchCloudAuthenticationTokenByLoggingIn.GetTokenAsync();
+            await Task.WhenAll(task1, task2);
+
+            // ASSERT
+            _handler.Protected().Verify("SendAsync", Times.Once(),
+               ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == new Uri(uriString) && r.Method == HttpMethod.Post),
+               ItExpr.IsAny<CancellationToken>());
         }
     }
 }
