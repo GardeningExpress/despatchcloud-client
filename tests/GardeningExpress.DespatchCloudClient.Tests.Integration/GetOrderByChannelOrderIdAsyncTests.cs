@@ -32,9 +32,6 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Integration
 
             result.Error.ShouldBeNull();
             result.Data.ChannelOrderId.ShouldBe(ChannelOrderId);
-
-            var result2 = await DespatchCloudHttpClient
-              .GetOrderByChannelOrderIdAsync(ChannelOrderId);
         }
     }
 }
