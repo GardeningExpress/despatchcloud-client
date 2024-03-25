@@ -39,7 +39,6 @@ namespace GardeningExpress.DespatchCloudClient.Auth
             _despatchCloudConfig = despatchCloudConfig;
             _logger = logger;
             _memoryCache = memoryCache;
-            //_memoryCache.Set<string>(keyForCacheEntry, null);
             _httpClient.BaseAddress = new Uri(_despatchCloudConfig.CurrentValue.ApiBaseUrl);
         }
 
