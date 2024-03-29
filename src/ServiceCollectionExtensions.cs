@@ -10,6 +10,7 @@ namespace GardeningExpress.DespatchCloudClient
     {
         public static void AddDespatchCloudClient(this IServiceCollection services)
         {
+            services.AddMemoryCache();
             services.AddOptions<DespatchCloudConfig>()
                 .Configure<IConfiguration>((settings, configuration) =>
                 {
@@ -39,6 +40,7 @@ namespace GardeningExpress.DespatchCloudClient
                     client.BaseAddress = new Uri(options.CurrentValue.ApiBaseUrl);
                 })
                 .AddHttpMessageHandler<AddAuthTokenHandler>();
+
         }
     }
 }
