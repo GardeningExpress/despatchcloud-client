@@ -62,7 +62,7 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Inventory
                     SKU = "test"
                 });
 
-            apiResponse.Error.ShouldBe("Response from DespatchCloud: 520");
+            apiResponse.Error.ShouldBe("Response from DespatchCloud: 520 - <reasonphrase not defined>");
         }
     }
 }

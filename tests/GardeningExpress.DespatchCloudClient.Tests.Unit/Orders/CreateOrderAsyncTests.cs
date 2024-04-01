@@ -63,5 +63,28 @@ namespace GardeningExpress.DespatchCloudClient.Tests.Unit.Orders
                 ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == new Uri(uriString) && r.Method == HttpMethod.Post),
                 ItExpr.IsAny<CancellationToken>());
         }
+
+        [Test]
+        public async Task CreateOrderAsync_ShouldReturnIsSuccessFalse_AndErrorMessage_WhenNon200ResponseOccurs()
+        {
+            // ARRANGE
+            var uriString = $"{_despatchCloudConfig.ApiBaseUrl}orders/create";
+            var uri = new Uri(uriString);
+
+            _handler.Protected().Setup<Task<HttpResponseMessage>>("SendAsync",
+                ItExpr.Is<HttpRequestMessage>(r => r.RequestUri == uri && r.Method == HttpMethod.Post),
+                ItExpr.IsAny<CancellationToken>())
+                .ReturnsAsync(new HttpResponseMessage(System.Net.HttpStatusCode.UnprocessableEntity)
+                {
+                    ReasonPhrase = "Unprocessable Entity"
+                });
+
+            // ACT
+            var result = await _despatchCloudHttpClient.CreateOrderAsync(orderRequest);
+
+            // ASSERT
+            Assert.False(result.IsSuccess);            
+            Assert.AreEqual("Response from DespatchCloud: 422 - Unprocessable Entity", result.Error);
+        }
     }
 }
